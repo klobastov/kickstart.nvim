@@ -201,6 +201,10 @@ return {
           root_dir = util.root_pattern '.git',
           init_options = {
             ['completion_worse.snippets'] = true,
+            ['language_server_phpstan.enabled'] = true,
+            ['language_server_php_cs_fixer.enabled'] = true,
+            ['language_server_php_cs_fixer.bin'] = '~/.local/bin/php-cs-fixer.phar',
+            ['language_server_phpstan.bin'] = '~/.local/bin/phpstan',
           },
         },
       }
