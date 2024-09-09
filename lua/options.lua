@@ -62,4 +62,12 @@ vim.opt.cursorline = true
 -- Minimal number of screen lines to keep above and below the cursor.
 vim.opt.scrolloff = 10
 
+-- CWD in neo-tree
+vim.opt.autochdir = true
+
+-- 24-bit colors
+vim.opt.termguicolors = true
+
+-- theme scheme
+vim.o.background = 'light'
 -- vim: ts=2 sts=2 sw=2 et
