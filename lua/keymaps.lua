@@ -50,4 +50,8 @@ vim.keymap.set('n', '<S-TAB>', '<cmd>bprev<CR>')
 vim.keymap.set('n', '<TAB>', '<cmd>bnext<CR>')
 vim.keymap.set('n', '<leader>bd', '<cmd>bdelete<CR>')
 
+-- PhpActor
+vim.keymap.set('n', '<leader>pn', '<cmd>:PhpActor new_class<cr>', { desc = '[P]hpActor: [N]ew PHP Class' })
+vim.keymap.set('n', '<leader>pa', '<cmd>:PhpActor actions<cr>', { desc = '[P]hpActor: context [A]ctions' })
+
 -- vim: ts=2 sts=2 sw=2 et

@@ -69,5 +69,6 @@ vim.opt.autochdir = true
 vim.opt.termguicolors = true
 
 -- theme scheme
-vim.o.background = 'light'
+vim.opt.background = 'light'
+
 -- vim: ts=2 sts=2 sw=2 et
