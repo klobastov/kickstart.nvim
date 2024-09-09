@@ -45,4 +45,9 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   end,
 })
 
+-- Buffers navigation
+vim.keymap.set('n', '<S-TAB>', '<cmd>bprev<CR>')
+vim.keymap.set('n', '<TAB>', '<cmd>bnext<CR>')
+vim.keymap.set('n', '<leader>bd', '<cmd>bdelete<CR>')
+
 -- vim: ts=2 sts=2 sw=2 et
