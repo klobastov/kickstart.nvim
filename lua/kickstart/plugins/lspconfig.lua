@@ -107,7 +107,7 @@ return {
 
           -- Execute a code action, usually your cursor needs to be on top of an error
           -- or a suggestion from your LSP for this to activate.
-          map('<leader>la', vim.lsp.buf.code_action, 'Suggestion [A]ction', { 'n', 'x' })
+          map('<A-CR>', vim.lsp.buf.code_action, 'Suggestion [A]ction', { 'n', 'x' })
 
           -- The following two autocommands are used to highlight references of the
           -- word under your cursor when your cursor rests there for a little while.
@@ -199,6 +199,8 @@ return {
           filetypes = { 'php' },
           root_dir = util.root_pattern '.git',
           init_options = {
+            ['completion.label_formatter'] = 'helpful',
+            ['completion.limit'] = 4,
             ['completion_worse.completor.attribute.enabled'] = true,
             ['completion_worse.completor.class_like.enabled'] = true,
             ['completion_worse.completor.constant.enabled'] = true,

@@ -6,7 +6,7 @@
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 
 -- Diagnostic keymaps
-vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
+vim.keymap.set('n', '<leader>d', vim.diagnostic.open_float, { desc = 'Open Diagnostic popup' })
 
 -- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier
 -- for people to discover. Otherwise, you normally need to press <C-\><C-n>, which
@@ -51,7 +51,17 @@ vim.keymap.set('n', '<TAB>', '<cmd>bnext<CR>')
 vim.keymap.set('n', '<leader>bd', '<cmd>bdelete<CR>')
 
 -- PhpActor
-vim.keymap.set('n', '<leader>pn', '<cmd>:PhpActor new_class<cr>', { desc = '[P]hpActor: [N]ew PHP Class' })
-vim.keymap.set('n', '<leader>pa', '<cmd>:PhpActor actions<cr>', { desc = '[P]hpActor: context [A]ctions' })
+vim.keymap.set('n', '<A-INSERT>', '<cmd>:PhpActor new_class<cr>', { desc = '[P]hpActor: [N]ew PHP Class' })
+vim.keymap.set('n', '<A-S-CR>', '<cmd>:PhpActor actions<cr>', { desc = '[P]hpActor: context [A]ctions' })
+
+-- Try fix C-Space as WORD [w] motion
+vim.keymap.set('n', '<C-Space>', '<nop>')
+vim.keymap.set('n', '<C-S-Space>', '<nop>')
+vim.keymap.set('n', '<C-CR>', '<nop>')
+vim.keymap.set('n', '<C-S-CR>', '<nop>')
+
+-- Try fix TABs add on insert mode
+vim.keymap.set('i', '<TAB>', '<nop>')
+vim.keymap.set('i', '<S-TAB>', '<nop>')
 
 -- vim: ts=2 sts=2 sw=2 et
