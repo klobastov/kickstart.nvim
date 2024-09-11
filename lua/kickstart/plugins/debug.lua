@@ -98,6 +98,7 @@ return {
       unpack(keys),
     }
   end,
+
   init = function()
     vim.api.nvim_create_autocmd({ 'FileType' }, {
       pattern = 'dap-float',
@@ -106,16 +107,38 @@ return {
       end,
     })
   end,
+
   config = function()
     local dap = require 'dap'
     local dapui = require 'dapui'
+    local repl = require 'dap.repl'
+    dap.defaults.fallback.force_external_terminal = true
+    dap.defaults.fallback.external_terminal = {
+      command = 'tmux',
+      args = { 'split-pane', '-c', vim.fn.getcwd(), '-l', 10 },
+    }
+
+    repl.commands = vim.tbl_extend('force', repl.commands, {
+      -- Add a new alias for the existing .exit command
+      exit = { 'exit', '.exit', '.bye' },
+      -- Add your own commands; run `.echo hello world` to invoke
+      -- this function with the text "hello world"
+      custom_commands = {
+        -- ['.tty'] = function(tty)
+        --   dap.repl.append('-exec gef config context.redirect ' .. tty)
+        -- end,
+        -- Hook up a new command to an existing dap function
+        ['.restart'] = dap.restart,
+      },
+    })
+
     require('nvim-dap-virtual-text').setup {
       enabled = true,
     }
     require('mason-nvim-dap').setup {
       -- Makes a best effort to setup the various debuggers with
       -- reasonable debug configurations
-      automatic_installation = true,
+      automatic_installation = false,
       handlers = {
         function(config)
           -- all sources with no handler get passed here
@@ -233,7 +256,7 @@ return {
         repl = 'r',
         toggle = 't',
       },
-      expand_lines = vim.fn.has 'nvim-0.7' == 1,
+      expand_lines = true,
       controls = {
         -- Requires Neovim nightly (or 0.8 when released)
         enabled = true,
