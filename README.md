@@ -12,7 +12,7 @@ If php-cs-fixer is in $PATH, you don't need to define line below
 `ln -s ~/.local/share/nvim/mason/packages/php-cs-fixer/php-cs-fixer ~/.local/bin/php-cs-fixer`
 
 *PhpActor*
-`ln -s /home/klobastov/.local/share/nvim/mason/packages/phpactor/phpactor ~/.local/bin/phpactor`
+`ln -s ~/.local/share/nvim/mason/packages/phpactor/phpactor ~/.local/bin/phpactor`
 *php-cs-fier**
 `ln -s ~/.local/share/nvim/mason/packages/php-cs-fixer/php-cs-fixer.phar ~/.local/bin/php-cs-fixer.phar`
 *PhpStan**
