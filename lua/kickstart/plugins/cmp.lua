@@ -12,9 +12,20 @@ return {
           end
           return 'make install_jsregexp'
         end)(),
-        dependencies = {},
+        dependencies = {
+          {
+            'rafamadriz/friendly-snippets',
+            config = function()
+              require('luasnip.loaders.from_vscode').lazy_load()
+            end,
+          },
+        },
       },
       'saadparwaiz1/cmp_luasnip',
+      'hrsh7th/cmp-buffer',
+      'hrsh7th/cmp-buffer',
+      'hrsh7th/cmp-path',
+      'rcarriga/cmp-dap',
     },
 
     config = function()
@@ -22,89 +33,13 @@ return {
       local cmp = require 'cmp'
       local luasnip = require 'luasnip'
       local icons = require 'mini.icons'
-      local context = require 'cmp.config.context'
-
-      -- per-filetype config
-      cmp.setup.filetype('lua', {
-        { name = 'nvim_lsp' },
-        { name = 'lazydev', group_index = 0 },
-        {
-          name = 'buffer',
-          option = { keyword_length = 4, keyword_pattern = [[\k\+]] },
-        },
-
-        { name = 'luasnip' },
-        {
-          name = 'snippets',
-          filter = function()
-            return not context.in_syntax_group 'Comment' or not context.in_treesitter_capture 'comment'
-          end,
-        },
-        -- { name = "treesitter" },
-        { name = 'path', option = { trailing_slash = true } },
-      })
-
-      cmp.setup.filetype({ 'markdown', 'text', 'quarto', 'qmd' }, {
-        sources = {
-          {
-            name = 'buffer',
-            option = { keyword_length = 4, keyword_pattern = [[\k\+]] },
-          },
-          { name = 'nvim_lsp' },
-          { name = 'snippets' },
-          { name = 'path', option = { trailing_slash = true } },
-          { name = 'obsidian' },
-          { name = 'obsidian_new' },
-          { name = 'obsidian_tags' },
-        },
-      })
-
-      cmp.setup.filetype('help', {
-        window = {
-          documentation = nil,
-        },
-      })
-
-      cmp.setup.filetype({ 'sql', 'mysql', 'plsql' }, {
-        sources = {
-          { name = 'nvim_lsp' },
-          -- { name = "treesitter" },
-          { name = 'snippets' },
-          { name = 'buffer' },
-        },
-      })
-
-      cmp.setup.filetype('gitcommit', {
-        sources = {
-          { name = 'gh_issues' },
-          { name = 'snippets' },
-        },
-      })
-
-      -- phpactor doesnot support dap completion
-      -- check with vim command bellow
-      -- :lua= require("dap").session().capabilities.supportsCompletionsRequest
-      cmp.setup.filetype({ 'dap-repl', 'dapui_watches', 'dapui_hover' }, {
-        sources = {
-          { name = 'dap' },
-        },
-      })
-
-      cmp.setup.filetype('php', {
-        sources = {
-          { name = 'nvim_lsp' },
-          {
-            name = 'buffer',
-            option = { keyword_length = 4, keyword_pattern = [[\k\+]] },
-          },
-          { name = 'snippets' },
-          { name = 'path', option = { trailing_slash = true } },
-        },
-      })
 
       cmp.setup {
+        enabled = function()
+          return vim.api.nvim_buf_get_option(0, 'buftype') ~= 'prompt' or require('cmp_dap').is_dap_buffer()
+        end,
         completion = {
-          completeopt = 'menuone,noselect,preview',
+          completeopt = 'menu,menuone,noselect',
           -- disable auto enable when typing
           autocomplete = false,
         },
@@ -126,9 +61,20 @@ return {
           end,
         },
 
-        enabled = function()
-          return vim.api.nvim_buf_get_option(0, 'buftype') ~= 'prompt' or require('cmp_dap').is_dap_buffer()
-        end,
+        sources = {
+          { name = 'lazydev', group_index = 0 },
+          {
+            name = 'luasnip',
+            option = {
+              -- use_show_condition = false,
+              --  show_autosnippets = true,
+            },
+          },
+          { name = 'nvim_lsp' },
+          { name = 'path' },
+          { name = 'buffer', max_item_count = 4 },
+          { name = 'dap' },
+        },
 
         formatting = {
           expandable_indicator = true,
@@ -138,7 +84,8 @@ return {
             vim_item.kind = string.format('%s %s', icons.get('lsp', vim_item.kind), vim_item.kind)
             vim_item.menu = ({
               nvim_lsp = '[LSP]',
-              snippets = '[Snip]',
+              nvim_lua = '[NVim Lua]',
+              luasnip = '[LuaSnip]',
               buffer = '[Buf]',
               path = '[Path]',
             })[entry.source.name]
@@ -146,7 +93,12 @@ return {
             return vim_item
           end,
         },
-
+        experimental = {
+          ghost_text = {
+            enable = true,
+            hl_group = 'Comment',
+          },
+        },
         mapping = cmp.mapping.preset.insert {
           ['<C-k>'] = cmp.mapping(cmp.mapping.select_prev_item(), { 'i', 'c' }),
           ['<C-j>'] = cmp.mapping(cmp.mapping.select_next_item(), { 'i', 'c' }),
@@ -157,6 +109,8 @@ return {
           ['<Tab>'] = cmp.mapping(function(fallback)
             if cmp.visible() then
               cmp.select_next_item { behavior = cmp.SelectBehavior.Insert }
+            elseif luasnip.expandable() then
+              luasnip.expand()
             elseif luasnip.expand_or_jumpable() then
               luasnip.expand_or_jump()
             else
@@ -196,44 +150,61 @@ return {
         },
 
         preselect = cmp.PreselectMode.Item,
-
-        experimental = {
-          ghost_text = {
-            enable = false,
-            hl_group = 'Comment',
-          },
-        },
       }
+
+      -- per-filetype config
+      cmp.setup.filetype('lua', {
+        { name = 'luasnip' },
+        { name = 'nvim_lsp' },
+        {
+          name = 'buffer',
+          option = { keyword_length = 4, keyword_pattern = [[\k\+]] },
+        },
+        { name = 'path', option = { trailing_slash = true } },
+      })
+
+      cmp.setup.filetype('help', {
+        window = {
+          documentation = nil,
+        },
+      })
+
+      -- phpactor doesnot support dap completion
+      -- check with vim command bellow
+      -- :lua= require("dap").session().capabilities.supportsCompletionsRequest
+      cmp.setup.filetype({ 'dap-repl', 'Commentdapui_watches', 'dapui_hover' }, {
+        sources = {
+          { name = 'dap' },
+        },
+      })
+
+      cmp.setup.filetype('php', {
+        sources = {
+          { name = 'nvim_lsp' },
+          { name = 'luasnip' },
+          {
+            name = 'buffer',
+            option = { keyword_length = 4, keyword_pattern = [[\k\+]] },
+          },
+          { name = 'path', option = { trailing_slash = true } },
+        },
+      })
     end,
   },
-  { 'hrsh7th/cmp-nvim-lsp', event = 'LspAttach' },
-  { 'hrsh7th/cmp-buffer', event = 'BufRead' },
-  { 'hrsh7th/cmp-path', event = 'BufRead' },
-  { 'rcarriga/cmp-dap', ft = { 'dap-repl', 'dapui_watches', 'dapui_hover' } },
-  {
-    'garymjr/nvim-snippets',
-    event = 'InsertEnter',
-    -- dependencies = { "kevinm6/snippets", dev = true },
-    opts = {
-      -- TODO on nvim-0.11 => set when activating built-in completion (w/o nvim-cmp)
-      -- o.create_cmp_source = false
-      extended_filetypes = {
-        typescript = { 'javascript', 'tsdoc' },
-        javascript = { 'jsdoc' },
-        html = { 'css', 'javascript' },
-        lua = { 'luadoc', 'nvim_lua' },
-        python = { 'python-docstring' },
-        java = { 'javadoc', 'java-testing' },
-        sh = { 'shelldoc' },
-        php = { 'phpdoc' },
-        ruby = { 'rdoc' },
-        quarto = { 'quarto', 'markdown', 'md' },
-        qmd = { 'quarto', 'md', 'markdown' },
-        rmarkdown = { 'markdown' },
-      },
-      search_paths = { vim.env.HOME .. '/dev/snippets' },
-    },
-  },
+  -- {
+  --   'garymjr/nvim-snippets',
+  --   event = 'InsertEnter',
+  --   -- dependencies = { "kevinm6/snippets", dev = true },
+  --   opts = {
+  --     -- TODO on nvim-0.11 => set when activating built-in completion (w/o nvim-cmp)
+  --     -- o.create_cmp_source = false
+  --     extended_filetypes = {
+  --       lua = { 'luadoc', 'nvim_lua' },
+  --       php = { 'phpdoc' },
+  --     },
+  --     search_paths = { vim.env.HOME .. '/dev/snippets' },
+  --   },
+  -- },
   {
     'hrsh7th/cmp-cmdline',
     event = 'CmdlineEnter',
@@ -243,8 +214,7 @@ return {
       cmp.setup.cmdline('/', {
         autocomplete = { cmp.TriggerEvent.TextChanged },
         sources = cmp.config.sources {
-          { name = 'buffer', length = 2 },
-          -- { name = "treesitter", length = 3 },
+          { name = 'buffer' },
         },
       })
 
@@ -252,9 +222,9 @@ return {
         autocomplete = { cmp.TriggerEvent.TextChanged },
         mapping = cmp.mapping.preset.cmdline(),
         sources = cmp.config.sources({
-          { name = 'path', option = { trailing_slash = true }, length = 2 },
+          { name = 'path', option = { trailing_slash = true } },
         }, {
-          { name = 'cmdline', length = 3 },
+          { name = 'cmdline' },
         }),
       })
     end,
