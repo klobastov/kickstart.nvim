@@ -197,10 +197,9 @@ return {
         },
         phpactor = {
           filetypes = { 'php' },
-          root_dir = util.root_pattern '.git',
+          root_dir = util.root_pattern 'composer.json',
           init_options = {
             ['completion.label_formatter'] = 'helpful',
-            ['completion.limit'] = 4,
             ['completion_worse.completor.attribute.enabled'] = true,
             ['completion_worse.completor.class_like.enabled'] = true,
             ['completion_worse.completor.constant.enabled'] = true,
