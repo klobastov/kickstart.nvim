@@ -112,6 +112,29 @@ return {
     local dap = require 'dap'
     local dapui = require 'dapui'
     local repl = require 'dap.repl'
+
+    dap.adapters.php_debug = {
+      type = 'executable',
+      command = 'node',
+      args = { vim.fn.stdpath 'data' .. '/mason/packages/php-debug-adapter/extension/out/phpDebug.js' },
+    }
+
+    -- Cant make it work with server + attch php -a
+    -- dap.adapters.php_listen = {
+    --   type = 'server',
+    --   port = 9229,
+    --   enrich_config = function(config, on_config)
+    --     local final_config = vim.deepcopy(config)
+    --     -- final_config.extra_property = 'This got injected by the adapter'
+    --     on_config(final_config)
+    --   end,
+    --   detached = false,
+    --   executable = {
+    --     command = 'node',
+    --     args = { vim.fn.stdpath 'data' .. '/mason/packages/php-debug-adapter/extension/out/phpDebug.js' },
+    --   },
+    -- }
+
     dap.defaults.fallback.force_external_terminal = true
     dap.defaults.fallback.external_terminal = {
       command = 'tmux',
@@ -147,15 +170,18 @@ return {
           require('mason-nvim-dap').default_setup(config)
         end,
         php = function(config)
-          config.adapters = {
-            type = 'executable',
-            command = 'node',
-            args = { vim.fn.stdpath 'data' .. '/mason/packages/php-debug-adapter/extension/out/phpDebug.js' },
-          }
           config.configurations = {
+            --{
+            --  type = 'php_listen',
+            --  repl_lang = 'php',
+            --  request = 'attach',
+            --  name = 'Listen for Xdebug in terminal',
+            --  port = 9003,
+            --  hostname = '0.0.0.0',
+            --},
             {
-              type = 'php',
-              prepl_lang = 'php',
+              type = 'php_debug',
+              repl_lang = 'php',
               request = 'launch',
               name = 'Debug current script locally',
               port = 9003,
@@ -173,8 +199,8 @@ return {
               },
             },
             {
-              type = 'php',
-              prepl_lang = 'php',
+              type = 'php_debug',
+              repl_lang = 'php',
               request = 'launch',
               name = 'Debug current script with args locally',
               port = 9003,
@@ -200,8 +226,8 @@ return {
               },
             },
             {
-              type = 'php',
-              prepl_lang = 'php',
+              type = 'php_debug',
+              repl_lang = 'php',
               request = 'launch',
               name = 'Run current script locally',
               port = 9003,
@@ -213,8 +239,8 @@ return {
               },
             },
             {
-              type = 'php',
-              prepl_lang = 'php',
+              type = 'php_debug',
+              repl_lang = 'php',
               request = 'launch',
               name = 'Run current script with args locally',
               port = 9003,
