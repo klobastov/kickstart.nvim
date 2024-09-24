@@ -32,7 +32,33 @@ return {
       -- See `:help cmp`
       local cmp = require 'cmp'
       local luasnip = require 'luasnip'
-      local icons = require 'mini.icons'
+      local kind_icons = {
+        Text = '  ',
+        Method = '  ',
+        Function = '  ',
+        Constructor = '  ',
+        Field = '  ',
+        Variable = '  ',
+        Class = '  ',
+        Interface = '  ',
+        Module = '  ',
+        Property = '  ',
+        Unit = '  ',
+        Value = '  ',
+        Enum = '  ',
+        Keyword = '  ',
+        Snippet = '  ',
+        Color = '  ',
+        File = '  ',
+        Reference = '  ',
+        Folder = '  ',
+        EnumMember = '  ',
+        Constant = '  ',
+        Struct = '  ',
+        Event = '  ',
+        Operator = '  ',
+        TypeParameter = '  ',
+      }
 
       cmp.setup {
         enabled = function()
@@ -81,7 +107,7 @@ return {
           fields = { 'abbr', 'kind', 'menu' },
           format = function(entry, vim_item)
             -- Kind icons
-            vim_item.kind = string.format('%s %s', icons.get('lsp', vim_item.kind), vim_item.kind)
+            vim_item.kind = string.format('%s %s', kind_icons[vim_item.kind], vim_item.kind)
             vim_item.menu = ({
               nvim_lsp = '[LSP]',
               nvim_lua = '[NVim Lua]',
