@@ -14,17 +14,14 @@ return {
     { '\\', ':Neotree reveal<CR>', desc = 'NeoTree reveal', silent = true },
   },
   opts = {
+    close_if_last_window = true,
+    auto_clean_after_session_restore = true,
     filesystem = {
       window = {
         mappings = {
           ['\\'] = 'close_window',
           ['<space>'] = 'toggle_preview',
         },
-      },
-      follow_current_file = {
-        enabled = true, -- This will find and focus the file in the active buffer every time
-        --               -- the current file is changed while the tree is open.
-        leave_dirs_open = true, -- `false` closes auto expanded dirs, such as with `:Neotree reveal`
       },
       filtered_items = {
         visible = true,
