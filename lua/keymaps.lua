@@ -46,9 +46,20 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 })
 
 -- Buffers navigation
-vim.keymap.set('n', '<S-TAB>', '<cmd>bprev<CR>')
-vim.keymap.set('n', '<TAB>', '<cmd>bnext<CR>')
-vim.keymap.set('n', '<leader>bd', '<cmd>bdelete<CR>')
+vim.keymap.set('n', '<TAB>', '<cmd>BufferLineCycleNext<CR>')
+vim.keymap.set('n', '<S-TAB>', '<cmd>BufferLineCyclePrev<CR>')
+vim.keymap.set('n', '<Leader>bb', '<cmd>BufferLinePick<CR>')
+-- @todo add Ctrl-F4 bind
+vim.keymap.set('n', '<Leader>bd', '<cmd>BufferLinePickClose<CR>')
+vim.keymap.set('n', '<Leader>1', '<cmd>BufferLineGoToBuffer 1<CR>')
+vim.keymap.set('n', '<Leader>2', '<cmd>BufferLineGoToBuffer 2<CR>')
+vim.keymap.set('n', '<Leader>3', '<cmd>BufferLineGoToBuffer 3<CR>')
+vim.keymap.set('n', '<Leader>4', '<cmd>BufferLineGoToBuffer 4<CR>')
+vim.keymap.set('n', '<Leader>5', '<cmd>BufferLineGoToBuffer 5<CR>')
+vim.keymap.set('n', '<Leader>6', '<cmd>BufferLineGoToBuffer 6<CR>')
+vim.keymap.set('n', '<Leader>7', '<cmd>BufferLineGoToBuffer 7<CR>')
+vim.keymap.set('n', '<Leader>8', '<cmd>BufferLineGoToBuffer 8<CR>')
+vim.keymap.set('n', '<Leader>9', '<cmd>BufferLineGoToBuffer 9<CR>')
 
 -- PhpActor
 vim.keymap.set('n', '<A-INSERT>', '<cmd>:PhpActor new_class<cr>', { desc = '[P]hpActor: [N]ew PHP Class' })
@@ -59,9 +70,18 @@ vim.keymap.set('n', '<C-Space>', '<nop>')
 vim.keymap.set('n', '<C-S-Space>', '<nop>')
 vim.keymap.set('n', '<C-CR>', '<nop>')
 vim.keymap.set('n', '<C-S-CR>', '<nop>')
+-- Try fix Enter as line down [j] motion
+vim.keymap.set('n', '<CR>', '<nop>')
+-- Try fix Backspace as symbol left [h] motion
+vim.keymap.set('n', '<BS>', '<nop>')
 
 -- Try fix TABs add on insert mode
 vim.keymap.set('i', '<TAB>', '<nop>')
 vim.keymap.set('i', '<S-TAB>', '<nop>')
+
+-- Save buffer
+vim.keymap.set('n', '<C-s>', '<cmd>update<CR>', { desc = 'Save buffer' })
+vim.keymap.set('i', '<C-s>', '<ESC><cmd>update<CR>gi', { desc = 'Save buffer' })
+vim.keymap.set('v', '<C-s>', '<C-C><cmd>:update<CR>', { desc = 'Save buffer' })
 
 -- vim: ts=2 sts=2 sw=2 et
