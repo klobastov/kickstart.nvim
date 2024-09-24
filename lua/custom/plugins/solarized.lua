@@ -29,6 +29,7 @@ return {
   },
   config = function(_, opts)
     require('solarized').setup(opts)
+    vim.opt.background = 'light'
     vim.cmd.colorscheme 'solarized'
   end,
 }
