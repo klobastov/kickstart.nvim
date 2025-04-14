@@ -8,9 +8,10 @@ return {
 
     -- optional
     'nvim-treesitter/nvim-treesitter',
-    'rcarriga/nvim-notify',
+    -- 'rcarriga/nvim-notify',
     'nvim-tree/nvim-web-devicons',
   },
+  enabled = false,
   opts = {
     ---@alias lc.lang
     ---| "cpp"

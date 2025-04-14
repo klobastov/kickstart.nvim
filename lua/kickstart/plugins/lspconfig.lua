@@ -28,6 +28,7 @@ return {
 
       -- Allows extra capabilities provided by nvim-cmp
       'hrsh7th/cmp-nvim-lsp',
+      'b0o/schemastore.nvim',
     },
     config = function()
       -- Brief aside: **What is LSP?**
@@ -81,8 +82,7 @@ return {
           --  To jump back, press <C-t>.
           map('gd', require('telescope.builtin').lsp_definitions, '[G]oto [D]efinition')
 
-          -- Find references for the word under your cursor.
-          map('gr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
+          map('gr', "<cmd>lua require('telescope.builtin').lsp_references { path_display = { 'truncate' }, show_line = false }<CR>", '[G]oto [R]eferences')
 
           -- Jump to the implementation of the word under your cursor.
           --  Useful when your language has ways of declaring types without an actual implementation.
@@ -91,15 +91,15 @@ return {
           -- Jump to the type of the word under your cursor.
           --  Useful when you're not sure what type a variable is and you want to see
           --  the definition of its *type*, not where it was *defined*.
-          map('<leader>lD', require('telescope.builtin').lsp_type_definitions, 'Type [D]efinition')
+          map('ge', require('telescope.builtin').lsp_type_definitions, 'Typ[e] Definition')
 
           -- Fuzzy find all the symbols in your current document.
           --  Symbols are things like variables, functions, types, etc.
-          map('<leader>ls', require('telescope.builtin').lsp_document_symbols, '[D]ocument [S]ymbols')
+          map('gs', require('telescope.builtin').lsp_document_symbols, '[D]ocument [S]ymbols')
 
           -- Fuzzy find all the symbols in your current workspace.
           --  Similar to document symbols, except searches over your entire project.
-          -- map('<leader>lsw', require('telescope.builtin').lsp_dynamic_workspace_symbols, '[W]orkspace [S]ymbols')
+          -- map('gw', require('telescope.builtin').lsp_dynamic_workspace_symbols, '[W]orkspace [S]ymbols')
 
           -- Rename the variable under your cursor.
           --  Most Language Servers support renaming across files, etc.
@@ -107,8 +107,10 @@ return {
 
           -- Execute a code action, usually your cursor needs to be on top of an error
           -- or a suggestion from your LSP for this to activate.
-          map('<A-CR>', vim.lsp.buf.code_action, 'Suggestion [A]ction', { 'n', 'x' })
+          map('<A-CR>', vim.lsp.buf.code_action, 'Suggestion [A]ction')
 
+          -- map('K', vim.lsp.buf.hover, 'Show hovered sinature')
+          -- map('<C-k>', vim.lsp.buf.signature_help, 'Shiw signature help')
           -- The following two autocommands are used to highlight references of the
           -- word under your cursor when your cursor rests there for a little while.
           --    See `:help CursorHold` for information about when this is executed
@@ -195,37 +197,66 @@ return {
             },
           },
         },
-        phpactor = {
+        -- phpactor = {
+        --   -- root fot phpactor with priority to composer file for monorep
+        --   root_dir = util.root_pattern('.git', 'composer.json'),
+        --   sourceName = 'PhpActor',
+        --   cmd = { 'phpactor', 'language-server' },
+        --   autostart = true,
+        --   init_options = {
+        --     ['completion.label_formatter'] = 'helpful',
+        --     ['completion_worse.completor.attribute.enabled'] = true,
+        --     ['completion_worse.completor.class_like.enabled'] = true,
+        --     ['completion_worse.completor.constant.enabled'] = true,
+        --     ['completion_worse.completor.declared_class.enabled'] = true,
+        --     ['completion_worse.completor.declared_constant.enabled'] = true,
+        --     ['completion_worse.completor.declared_function.enabled'] = true,
+        --     ['completion_worse.completor.docblock.enabled'] = true,
+        --     ['completion_worse.completor.doctrine_annotation.enabled'] = true,
+        --     ['completion_worse.completor.expression_name_search.enabled'] = true,
+        --     ['completion_worse.completor.imported_names.enabled'] = true,
+        --     ['completion_worse.completor.named_parameter.enabled'] = true,
+        --     ['completion_worse.completor.scf_class.enabled'] = true,
+        --     ['completion_worse.completor.subscript.enabled'] = true,
+        --     ['completion_worse.completor.symfony.enabled'] = true,
+        --     ['completion_worse.completor.type.enabled'] = true,
+        --     ['completion_worse.completor.use.enabled'] = true,
+        --     ['completion_worse.snippets'] = true,
+        --   },
+        -- },
+        psalm = {
+          root_dir = util.root_pattern('psalm.xml', 'psalm.xml.dist'),
+          sourceName = 'Psalm',
           filetypes = { 'php' },
-          root_dir = util.root_pattern 'composer.json',
-          init_options = {
-            ['completion.label_formatter'] = 'helpful',
-            ['completion_worse.completor.attribute.enabled'] = true,
-            ['completion_worse.completor.class_like.enabled'] = true,
-            ['completion_worse.completor.constant.enabled'] = true,
-            ['completion_worse.completor.declared_class.enabled'] = true,
-            ['completion_worse.completor.declared_constant.enabled'] = true,
-            ['completion_worse.completor.declared_function.enabled'] = true,
-            ['completion_worse.completor.docblock.enabled'] = true,
-            ['completion_worse.completor.doctrine_annotation.enabled'] = true,
-            ['completion_worse.completor.expression_name_search.enabled'] = true,
-            ['completion_worse.completor.imported_names.enabled'] = true,
-            ['completion_worse.completor.named_parameter.enabled'] = true,
-            ['completion_worse.completor.scf_class.enabled'] = true,
-            ['completion_worse.completor.subscript.enabled'] = true,
-            ['completion_worse.completor.symfony.enabled'] = true,
-            ['completion_worse.completor.type.enabled'] = true,
-            ['completion_worse.completor.use.enabled'] = true,
-            ['completion_worse.snippets'] = true,
-            ['language_server_php_cs_fixer.bin'] = '~/.local/bin/php-cs-fixer.phar',
-            ['language_server_php_cs_fixer.enabled'] = true,
-            ['language_server_phpstan.bin'] = '~/.local/bin/phpstan',
-            ['language_server_phpstan.enabled'] = true,
-            ['symfony.enabled'] = true,
-            -- disabled
-            ['completion_worse.completor.constructor.enabled'] = false,
-            ['completion_worse.completor.local_variable.enabled'] = false,
-            ['completion_worse.completor.worse_parameter.enabled'] = false,
+          cmd = { 'psalm', '--language-server' },
+          requiredFiles = { 'psalm.xml' },
+          autostart = true,
+        },
+        yamlls = {
+          on_attach = function(client)
+            client.server_capabilities.documentFormattingProvider = true
+          end,
+          settings = {
+            yaml = {
+              format = { enable = true },
+              schemaStore = {
+                enable = false,
+                url = '',
+              },
+              schemas = require('schemastore').yaml.schemas(),
+            },
+          },
+        },
+        jsonls = {
+          settings = {
+            json = {
+              validate = { enable = true },
+              schemas = require('schemastore').json.schemas {
+                select = {
+                  'composer.json',
+                },
+              },
+            },
           },
         },
       }
@@ -242,6 +273,20 @@ return {
       -- for you, so that they are available from within Neovim.
       local ensure_installed = vim.tbl_keys(servers or {})
       vim.list_extend(ensure_installed, {
+        'lua-language-server',
+        'php-cs-fixer',
+        'php-debug-adapter',
+        -- 'phpactor',
+        'psalm',
+        'phpstan',
+        'yamlls',
+        'jsonls',
+        'markdownlint',
+        'sql-formatter',
+        'prettierd',
+
+        --'sqlfluff',
+        --'sqlfmt',
         'stylua', -- Used to format Lua code
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
@@ -250,10 +295,28 @@ return {
         handlers = {
           function(server_name)
             local server = servers[server_name] or {}
+
             -- This handles overriding only values explicitly passed
             -- by the server configuration above. Useful when disabling
             -- certain features of an LSP (for example, turning off formatting for tsserver)
             server.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
+
+            server.handlers = {
+              ['textDocument/publishDiagnostics'] = vim.lsp.with(vim.lsp.diagnostic.on_publish_diagnostics, {
+                underline = true,
+                update_in_insert = true,
+                virtual_text = false,
+                severity_sort = true,
+                signs = {
+                  text = {
+                    [vim.diagnostic.severity.ERROR] = '',
+                    [vim.diagnostic.severity.WARN] = '',
+                    [vim.diagnostic.severity.HINT] = '',
+                    [vim.diagnostic.severity.INFO] = '',
+                  },
+                },
+              }),
+            }
             require('lspconfig')[server_name].setup(server)
           end,
         },

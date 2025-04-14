@@ -1,5 +1,4 @@
 return {
-
   { -- Linting
     'mfussenegger/nvim-lint',
     event = { 'BufReadPre', 'BufNewFile' },
@@ -7,6 +6,8 @@ return {
       local lint = require 'lint'
       lint.linters_by_ft = {
         markdown = { 'markdownlint' },
+        php = { 'phpstan' }, -- see below - moved phpstan to ALE for now to avoid blocking the UI on save
+        --sql = { 'sqlfluff' }
       }
 
       -- To allow other plugins to add linters to require('lint').linters_by_ft,
@@ -40,6 +41,32 @@ return {
       -- lint.linters_by_ft['ruby'] = nil
       -- lint.linters_by_ft['terraform'] = nil
       -- lint.linters_by_ft['text'] = nil
+
+      table.insert(lint.linters.phpstan.args, '--memory-limit=256M')
+
+      local diagnostic_opts = {
+        underline = true,
+        update_in_insert = true,
+        virtual_text = false,
+        severity_sort = true,
+        signs = {
+          text = {
+            [vim.diagnostic.severity.ERROR] = '',
+            [vim.diagnostic.severity.WARN] = '',
+            [vim.diagnostic.severity.HINT] = '',
+            [vim.diagnostic.severity.INFO] = '',
+          },
+        },
+      }
+
+      local md = require('lint').get_namespace 'markdownlint'
+      vim.diagnostic.config(diagnostic_opts, md)
+
+      local php = require('lint').get_namespace 'phpstan'
+      vim.diagnostic.config(diagnostic_opts, php)
+
+      --local sql = require('lint').get_namespace 'sqlfluff'
+      --vim.diagnostic.config(diagnostic_opts, sdl)
 
       -- Create autocommand which carries out the actual linting
       -- on the specified events.

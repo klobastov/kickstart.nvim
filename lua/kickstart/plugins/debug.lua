@@ -19,18 +19,18 @@ return {
     local dapui = require 'dapui'
     return {
       {
-        '<leader>db',
+        '<leader>cc',
         function()
           dap.set_breakpoint(vim.fn.input 'Breakpoint condition: ')
         end,
-        desc = 'Breakpoint Condition',
+        desc = 'Breakpoint [c]ondition',
       },
       {
-        '<leader>dd',
+        '<leader>cb',
         function()
           dap.toggle_breakpoint()
         end,
-        desc = 'Toggle Breakpoint',
+        desc = 'Toggle [B]reakpoint',
       },
       {
         '<F5>',
@@ -73,13 +73,6 @@ return {
           dap.step_over()
         end,
         desc = 'Step Over',
-      },
-      {
-        '<leader>dr',
-        function()
-          dap.repl.toggle()
-        end,
-        desc = 'Toggle REPL',
       },
       {
         '<F7>',
@@ -183,6 +176,17 @@ return {
               type = 'php_debug',
               repl_lang = 'php',
               request = 'launch',
+              name = 'Listen for Xdebug in terminal',
+              port = 9003,
+              hostname = '0.0.0.0',
+              pathMappings = {
+                ['${workspaceFolder}'] = '${workspaceFolder}',
+              },
+            },
+            {
+              type = 'php_debug',
+              repl_lang = 'php',
+              request = 'launch',
               name = 'Debug current script locally',
               port = 9003,
               hostname = '0.0.0.0',
@@ -271,32 +275,21 @@ return {
     }
 
     dapui.setup {
-      force_buffers = true,
-      icons = { expanded = '▾', collapsed = '▸', current_frame = '*' },
-      mappings = {
-        -- Use a table to apply multiple mappings
-        expand = { '<CR>', '<2-LeftMouse>' },
-        open = 'o',
-        remove = 'd',
-        edit = 'e',
-        repl = 'r',
-        toggle = 't',
-      },
-      expand_lines = true,
       controls = {
         -- Requires Neovim nightly (or 0.8 when released)
         enabled = true,
         -- Display controls in this element
-        element = 'repl',
+        element = 'breakpoints',
         icons = {
-          pause = '',
-          play = '',
-          step_into = '↘️',
-          step_over = '➡️',
-          step_out = '↖️',
-          step_back = '',
-          run_last = '↻',
-          terminate = '□',
+          disconnect = "",
+          pause = "",
+          play = "",
+          run_last = "",
+          step_back = "",
+          step_into = "",
+          step_out = "",
+          step_over = "",
+          terminate = ""
         },
       },
       element_mappings = {
@@ -316,37 +309,53 @@ return {
           toggle = 't',
         },
       },
-      layouts = {
-        {
-          elements = {
-            'scopes',
-            'stacks',
-            'watches',
-          },
-          size = 0.2, -- 40 columns
-          position = 'left',
-        },
-        {
-          elements = {
-            'repl',
-            'breakpoints',
-          },
-          size = 0.3,
-          position = 'bottom',
-        },
-      },
+      expand_lines = true,
       floating = {
-        max_height = nil,
-        max_width = nil,
+        -- max_height = nil,
+        -- max_width = nil,
         border = 'single', -- Border style. Can be "single", "double" or "rounded"
         mappings = {
           close = { 'q', '<Esc>' },
         },
       },
-      windows = { indent = 1 },
+      force_buffers = true,
+      icons = {
+        collapsed = "",
+        current_frame = "",
+        expanded = ""
+      },
+      layouts = {
+        {
+          elements = {
+            'scopes',
+            'watches',
+            'stacks',
+            'repl',
+            'breakpoints',
+          },
+          size = 0.35,
+          position = 'right',
+        },
+        -- {
+        --   elements = {
+        --     -- for PHP useless
+        --     'repl',
+        --   },
+        --   size = 0.25,
+        --   position = 'left',
+        -- },
+      },
+      mappings = {
+        edit = "e",
+        expand = { "<CR>", "<2-LeftMouse>" },
+        open = "o",
+        remove = "d",
+        repl = "r",
+        toggle = "t"
+      },
       render = {
         indent = 1,
-        max_type_length = nil, -- Can be integer or nil.
+        -- max_type_length = nil, -- Can be integer or nil.
         max_value_lines = 100, -- Can be integer or nil.
       },
     }

@@ -7,6 +7,7 @@ require('lazy').setup({
   require 'kickstart/plugins/conform',
   require 'kickstart/plugins/cmp',
   require 'kickstart/plugins/treesitter',
+  require 'kickstart/plugins/autopairs',
 
   require 'kickstart.plugins.debug',
   require 'kickstart.plugins.indent_line',
@@ -15,6 +16,8 @@ require('lazy').setup({
 
   { import = 'custom.plugins' },
 }, {
+  concurrency = 5,
+  checker = { enabled = false },
   rocks = {
     enabled = false,
   },

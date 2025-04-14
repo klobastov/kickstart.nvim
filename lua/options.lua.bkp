@@ -28,54 +28,51 @@ vim.o.background = 'light'
 -----------------------------------------------------------
 -- Neovim UI
 -----------------------------------------------------------
-vim.o.number = true -- Show line number
-vim.o.showmatch = true -- Highlight matching parenthesis
+vim.o.number = true         -- Show line number
+vim.o.showmatch = true      -- Highlight matching parenthesis
 vim.o.foldmethod = 'marker' -- Enable folding (default 'foldmarker')
-vim.o.colorcolumn = '120' -- Line lenght marker at 80 columns
-vim.o.splitright = true -- Vertical split to the right
-vim.o.splitbelow = true -- Horizontal split to the bottom
-vim.o.ignorecase = true -- Ignore case letters when search
-vim.o.smartcase = true -- Ignore lowercase for the whole pattern
+vim.o.colorcolumn = '120'   -- Line lenght marker at 80 columns
+vim.o.splitright = true     -- Vertical split to the right
+vim.o.splitbelow = true     -- Horizontal split to the bottom
+vim.o.ignorecase = true     -- Ignore case letters when search
+vim.o.smartcase = true      -- Ignore lowercase for the whole pattern
 vim.o.wrap = false
-vim.o.linebreak = true -- Wrap on word boundary
+vim.o.linebreak = true      -- Wrap on word boundary
 vim.o.breakindent = true
-vim.o.termguicolors = true -- Enable 24-bit RGB colors
-vim.o.laststatus = 3 -- Set global statusline
-vim.o.ruler = false -- Show the line and column number of the cursor position, separated by comma
+vim.o.termguicolors = true  -- Enable 24-bit RGB colors
+vim.o.laststatus = 3        -- Set global statusline
+vim.o.ruler = false         -- Show the line and column number of the cursor position, separated by comma
 
 -----------------------------------------------------------
 -- Memory, CPU
 -----------------------------------------------------------
-vim.o.hidden = true -- Enable background buffers
-vim.o.history = 2000 -- Remember N lines in history
+vim.o.hidden = true    -- Enable background buffers
+vim.o.history = 2000   -- Remember N lines in history
 --vim.o.lazyredraw = true -- Faster scrolling
-vim.o.synmaxcol = 240 -- Max column for syntax highlight
+vim.o.synmaxcol = 240  -- Max column for syntax highlight
 vim.o.updatetime = 250 -- ms to wait for trigger an event
 
 -----------------------------------------------------------
 -- Editor
 -----------------------------------------------------------
-vim.o.startofline = false -- Additional no next option
-vim.o.virtualedit = 'all' -- Save cursor position on movement
-vim.o.timeoutlen = 300 -- Decrease mapped sequence wait time
-vim.o.relativenumber = true -- You can also add relative line numbers, to help with jumping.
-vim.o.showmode = false -- Don't show the mode, since it's already in the status line
-vim.o.signcolumn = 'yes:1' -- Keep signcolumn on by default
--- vim.opt.list = true             -- Sets how neovim will display certain whitespace characters in the editor.
--- vim.opt.listchars = { tab = '» ', trail = '·', nbsp = '␣' }
-vim.o.cursorline = false -- Show which line your cursor is on
-vim.o.scrolloff = 10 -- Minimal number of screen lines to keep above and below the cursor.
-vim.o.inccommand = 'split' -- Preview substitutions live, as you type!
--- vim.o.showcmdloc = 'statusline' -- Status line of the current window
+vim.o.timeoutlen = 300          -- Decrease mapped sequence wait time
+vim.o.relativenumber = true     -- You can also add relative line numbers, to help with jumping.
+vim.o.showmode = false          -- Don't show the mode, since it's already in the status line
+vim.o.signcolumn = 'yes:1'      -- Keep signcolumn on by default
+vim.opt.list = true             -- Sets how neovim will display certain whitespace characters in the editor.
+vim.opt.listchars = { tab = '» ', trail = '·', nbsp = '␣' }
+vim.o.cursorline = true         -- Show which line your cursor is on
+vim.o.scrolloff = 10            -- Minimal number of screen lines to keep above and below the cursor.
+vim.o.inccommand = 'split'      -- Preview substitutions live, as you type!
+vim.o.showcmdloc = 'statusline' -- Status line of the current window
 vim.diagnostic.config {
   float = {
     source = true,
-    -- border = 'rounded',
+    border = 'rounded',
   },
   signs = true,
   severity_sort = true,
 }
-vim.o.scrollback = 10
 -----------------------------------------------------------
 -- Plugins [Auto-sessions]
 -----------------------------------------------------------
