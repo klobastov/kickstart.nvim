@@ -10,12 +10,12 @@ local lspkind_comparator = function(conf)
     end
     local kind1 = lsp_types.CompletionItemKind[entry1:get_kind()]
     local kind2 = lsp_types.CompletionItemKind[entry2:get_kind()]
-    if kind1 == 'Variable' and entry1:get_completion_item().label:match '%w*=' then
-      kind1 = 'Parameter'
-    end
-    if kind2 == 'Variable' and entry2:get_completion_item().label:match '%w*=' then
-      kind2 = 'Parameter'
-    end
+    -- if kind1 == 'Variable' and entry1:get_completion_item().label:match '%w*=' then
+    --   kind1 = 'Parameter'
+    -- end
+    -- if kind2 == 'Variable' and entry2:get_completion_item().label:match '%w*=' then
+    --   kind2 = 'Parameter'
+    -- end
 
     local priority1 = conf.kind_priority[kind1] or 0
     local priority2 = conf.kind_priority[kind2] or 0
@@ -29,10 +29,11 @@ end
 local label_comparator = function(entry1, entry2)
   return entry1.completion_item.label < entry2.completion_item.label
 end
+
 return {
-  { -- Autocompletion
+  {
     'hrsh7th/nvim-cmp',
-    event = { 'InsertEnter', 'CmdlineEnter' },
+    event = { 'InsertEnter' },
     dependencies = {
       -- Snippet Engine & its associated nvim-cmp source
       {
@@ -58,44 +59,46 @@ return {
       'rcarriga/cmp-dap',
       {
         'MattiasMTS/cmp-dbee',
+        enabled = false,
         dependencies = {
           { 'kndndrj/nvim-dbee' },
         },
         ft = 'sql', -- optional but good to have
         opts = {}, -- needed
       },
+      'f3fora/cmp-spell',
     },
 
     config = function()
-      -- See `:help cmp`
       local cmp = require 'cmp'
+      local compare = require 'cmp.config.compare'
       local luasnip = require 'luasnip'
       local kind_icons = {
-        Text = '  ',
-        Method = '  ',
-        Function = '  ',
-        Constructor = '  ',
-        Field = '  ',
-        Variable = '  ',
-        Class = '  ',
-        Interface = '  ',
-        Module = '  ',
-        Property = '  ',
-        Unit = '  ',
-        Value = '  ',
-        Enum = '  ',
-        Keyword = '  ',
-        Snippet = '  ',
-        Color = '  ',
-        File = '  ',
-        Reference = '  ',
-        Folder = '  ',
-        EnumMember = '  ',
-        Constant = '  ',
-        Struct = '  ',
-        Event = '  ',
-        Operator = '  ',
-        TypeParameter = '  ',
+        Text = '',
+        Method = '',
+        Function = '',
+        Constructor = '',
+        Field = '',
+        Variable = '',
+        Class = '',
+        Interface = '',
+        Module = '',
+        Property = '',
+        Unit = '',
+        Value = '',
+        Enum = '',
+        Keyword = '',
+        Snippet = '',
+        Color = '',
+        File = '',
+        Reference = '',
+        Folder = '',
+        EnumMember = '',
+        Constant = '',
+        Struct = '',
+        Event = '',
+        Operator = '',
+        TypeParameter = '',
       }
 
       cmp.setup {
@@ -103,9 +106,9 @@ return {
           return vim.api.nvim_buf_get_option(0, 'buftype') ~= 'prompt' or require('cmp_dap').is_dap_buffer()
         end,
         completion = {
-          completeopt = 'menu,menuone,noselect',
-          -- disable auto enable when typing
-          autocomplete = false,
+          -- completeopt = 'menu,menuone,noinsert,noselect',
+          completeopt = 'menu,menuone,preview,noselect',
+          autocomplete = { cmp.TriggerEvent.TextChanged },
         },
 
         window = {
@@ -121,7 +124,7 @@ return {
 
         snippet = {
           expand = function(args)
-            luasnip.lsp_expand(args.body)
+            luasnip.lsp_expand(args.body) -- For `luasnip` users.
           end,
         },
 
@@ -129,64 +132,83 @@ return {
           { name = 'lazydev', group_index = 0 },
           {
             name = 'luasnip',
+            group_index = 2,
             option = {
               use_show_condition = true,
               show_autosnippets = true,
             },
           },
-          { name = 'nvim_lsp' },
-          { name = 'path' },
-          { name = 'buffer', max_item_count = 4 },
+          { name = 'nvim_lsp', group_index = 2, priority = 10 },
+          { name = 'path', max_item_count = 4, priority = 7 },
+          { name = 'buffer', max_item_count = 4, priority = 9 },
+          {
+            name = 'spell',
+            max_item_count = 4,
+            priority = 8,
+            option = {
+              keep_all_entries = false,
+              enable_in_context = function()
+                return true
+              end,
+              preselect_correct_word = false,
+            },
+          },
           { name = 'cmp-dbee' },
           { name = 'dap' },
         },
-        sorting = {
-          comparators = {
-            lspkind_comparator {
-              kind_priority = {
-                Parameter = 14,
-                Variable = 12,
-                Field = 11,
-                Property = 11,
-                Constant = 10,
-                Enum = 10,
-                EnumMember = 10,
-                Event = 10,
-                Function = 10,
-                Method = 10,
-                Operator = 10,
-                Reference = 10,
-                Struct = 10,
-                File = 8,
-                Folder = 8,
-                Class = 5,
-                Color = 5,
-                Module = 5,
-                Keyword = 2,
-                Constructor = 1,
-                Interface = 1,
-                Snippet = 0,
-                Text = 1,
-                TypeParameter = 1,
-                Unit = 1,
-                Value = 1,
-              },
-            },
-            label_comparator,
-          },
-        },
+        -- sorting = {
+        --   priority_weight = 1,
+        --   comparators = {
+        --     -- compare.recently_used,
+        --     -- lspkind_comparator {
+        --     --   kind_priority = {
+        --     --     Parameter = 14,
+        --     --     Variable = 12,
+        --     --     Field = 11,
+        --     --     Property = 11,
+        --     --     Constant = 10,
+        --     --     Keyword = 15,
+        --     --     Enum = 10,
+        --     --     EnumMember = 10,
+        --     --     Event = 10,
+        --     --     Function = 10,
+        --     --     Method = 10,
+        --     --     Operator = 10,
+        --     --     Reference = 10,
+        --     --     Struct = 10,
+        --     --     File = 8,
+        --     --     Folder = 8,
+        --     --     Class = 5,
+        --     --     Color = 5,
+        --     --     Module = 5,
+        --     --     Constructor = 3,
+        --     --     Interface = 5,
+        --     --     TypeParameter = 5,
+        --     --     Unit = 1,
+        --     --     Value = 1,
+        --     --     Text = 0,
+        --     --     Snippet = 9,
+        --     --   },
+        --     -- },
+        --     label_comparator,
+        --     compare.exact,
+        --     -- compare.scopes,
+        --     -- compare.sort_text,
+        --   },
+        -- },
         formatting = {
           expandable_indicator = true,
           fields = { 'abbr', 'kind', 'menu' },
           format = function(entry, vim_item)
             -- Kind icons
-            vim_item.kind = string.format('%s %s', kind_icons[vim_item.kind], vim_item.kind)
+            vim_item.kind = string.format('%s %s', kind_icons[vim_item.kind], vim_item.kind) or ''
             vim_item.menu = ({
               -- nvim_lsp = '[LSP]',
               nvim_lua = '[NVim Lua]',
               luasnip = '[LuaSnip]',
               buffer = '[Buf]',
               path = '[Path]',
+              spell = '[Spell]',
             })[entry.source.name]
 
             if entry.source.name == 'nvim_lsp' then
@@ -200,17 +222,17 @@ return {
             return vim_item
           end,
         },
-        experimental = {
-          ghost_text = {
-            enable = true,
-            hl_group = 'Comment',
-          },
-        },
+        -- experimental = {
+        --   ghost_text = {
+        --     enable = false,
+        --     hl_group = 'Comment',
+        --   },
+        -- },
         mapping = cmp.mapping.preset.insert {
-          ['<C-k>'] = cmp.mapping(cmp.mapping.select_prev_item(), { 'i', 'c' }),
-          ['<C-j>'] = cmp.mapping(cmp.mapping.select_next_item(), { 'i', 'c' }),
-          ['<C-p>'] = cmp.mapping(cmp.mapping.select_prev_item(), { 'i', 'c' }),
-          ['<C-n>'] = cmp.mapping(cmp.mapping.select_next_item(), { 'i', 'c' }),
+          ['<C-k>'] = cmp.mapping(cmp.mapping.select_prev_item()),
+          ['<C-j>'] = cmp.mapping(cmp.mapping.select_next_item()),
+          ['<C-p>'] = cmp.mapping(cmp.mapping.select_prev_item()),
+          ['<C-n>'] = cmp.mapping(cmp.mapping.select_next_item()),
 
           -- jump to next porition after modify or complete
           ['<Tab>'] = cmp.mapping(function(fallback)
@@ -223,12 +245,12 @@ return {
             else
               fallback()
             end
-          end, { 'i', 'c', 's' }),
-          -- s for switchin params in function after complete
+          end),
+          -- s for switching parameters in function after complete
           -- c for search command line
           -- i for default writing code and vim command line
 
-          -- jump to prew porition after modify or complete
+          -- jump to previous position after modify or complete
           ['<S-Tab>'] = cmp.mapping(function(fallback)
             if cmp.visible() then
               cmp.select_prev_item { behavior = cmp.SelectBehavior.Insert }
@@ -237,15 +259,15 @@ return {
             else
               fallback()
             end
-          end, { 'i', 'c', 's' }),
+          end),
 
           -- abort completion in code and vim command line
-          ['<C-e>'] = cmp.mapping(cmp.mapping.abort(), { 'i', 's', 'c' }),
+          ['<C-e>'] = cmp.mapping(cmp.mapping.abort()),
 
-          ['<C-Space>'] = cmp.mapping(cmp.mapping.complete(), { 'i', 's', 'c' }),
+          ['<C-Space>'] = cmp.mapping(cmp.mapping.complete()),
 
           -- confirm completion
-          ['<CR>'] = cmp.mapping(cmp.mapping.confirm { select = true, behavior = cmp.ConfirmBehavior.Replace }, { 'i', 's', 'c' }),
+          ['<CR>'] = cmp.mapping(cmp.mapping.confirm { select = true, behavior = cmp.ConfirmBehavior.Replace }),
 
           ['<C-g>'] = function()
             if not cmp.visible_docs() then
@@ -256,32 +278,27 @@ return {
           end,
         },
 
-        preselect = cmp.PreselectMode.Item,
+        -- preselect = cmp.PreselectMode.Item,
+        preselect = cmp.PreselectMode.None,
       }
 
-      -- per-filetype config
       cmp.setup.filetype('lua', {
         sources = {
-          { name = 'luasnip' },
           { name = 'nvim_lsp' },
-          {
-            name = 'buffer',
-            option = { keyword_length = 4, keyword_pattern = [[\k\+]] },
-          },
-          { name = 'path', option = { trailing_slash = true } },
+          { name = 'luasnip' },
+          { name = 'buffer' },
+          { name = 'path' },
+          { name = 'spell' },
         },
       })
 
       cmp.setup.filetype('sql', {
         sources = {
+          { name = 'nvim_lsp' },
           { name = 'luasnip' },
           { name = 'cmp-dbee' },
-          { name = 'nvim_lsp' },
-          {
-            name = 'buffer',
-            option = { keyword_length = 4, keyword_pattern = [[\k\+]] },
-          },
-          { name = 'path', option = { trailing_slash = true } },
+          { name = 'buffer' },
+          { name = 'path' },
         },
       })
 
@@ -304,11 +321,9 @@ return {
         sources = {
           { name = 'nvim_lsp' },
           { name = 'luasnip' },
-          -- {
-          --   name = 'buffer',
-          --   option = { keyword_length = 4, keyword_pattern = [[\k\+]] },
-          -- },
-          { name = 'path', option = { trailing_slash = true } },
+          { name = 'buffer' },
+          { name = 'path' },
+          { name = 'spell' },
         },
       })
     end,
@@ -333,21 +348,21 @@ return {
     config = function()
       local cmp = require 'cmp'
 
-      cmp.setup.cmdline('/', {
-        autocomplete = { cmp.TriggerEvent.TextChanged },
+      cmp.setup.cmdline({ '/', '?' }, {
+        mapping = cmp.mapping.preset.cmdline(),
         sources = cmp.config.sources {
           { name = 'buffer' },
         },
       })
 
       cmp.setup.cmdline(':', {
-        autocomplete = { cmp.TriggerEvent.TextChanged },
         mapping = cmp.mapping.preset.cmdline(),
         sources = cmp.config.sources({
           { name = 'path', option = { trailing_slash = true } },
         }, {
           { name = 'cmdline' },
         }),
+        matching = { disallow_symbol_nonprefix_matching = false },
       })
     end,
   },

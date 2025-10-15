@@ -11,7 +11,17 @@ local user_grp = augroup('UserGroup', { clear = true })
 --  command = "setlocal commentstring=--%s",
 --  group = user_grp,
 --})
-
+-- vim.api.nvim_create_autocmd({ 'BufEnter', 'FileType' }, {
+--   desc = 'Hide foldcolumn for some file types',
+--   pattern = { 'neo-tree' }, -- Apply to buffers with the "neo-tree" filetype
+--   group = user_grp,
+--   callback = function()
+--     vim.opt_local.foldcolumn = '0'
+--     vim.opt_local.foldenable = false
+--     vim.opt_local.spell = false
+--     vim.opt_local.signcolumn = 'no'
+--   end,
+-- })
 usercmd('FormatDisable', function(args)
   if args.bang then
     -- FormatDisable! will disable formatting just for this buffer
@@ -30,6 +40,20 @@ usercmd('FormatEnable', function()
 end, {
   desc = 'Re-enable autoformat-on-save',
 })
+
+-- autocmd('FileType', {
+--   desc = 'Disable columns in neo-tree',
+--   pattern = { 'neo-tree' },
+--   callback = function()
+--     vim.opt_local.foldenable = false
+--     vim.opt_local.foldcolumn = '0'
+--     vim.opt_local.signcolumn = 'no'
+--     vim.opt_local.colorcolumn = ''
+--     vim.opt_local.wrap = false
+--     vim.opt_local.spell = false
+--   end,
+--   group = user_grp,
+-- })
 
 autocmd('TextYankPost', {
   desc = 'Highlight on yank',

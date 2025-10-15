@@ -1,6 +1,7 @@
 return {
   {
     'gbprod/phpactor.nvim',
+    enabled = true,
     build = function()
       require 'phpactor.handler.update'()
     end,
@@ -25,26 +26,6 @@ return {
       },
       lspconfig = {
         enabled = true,
-        options = {
-          -- ['completion.label_formatter'] = 'helpful',
-          -- ['completion_worse.completor.attribute.enabled'] = true,
-          -- ['completion_worse.completor.class_like.enabled'] = true,
-          -- ['completion_worse.completor.constant.enabled'] = true,
-          -- ['completion_worse.completor.declared_class.enabled'] = true,
-          -- ['completion_worse.completor.declared_constant.enabled'] = true,
-          -- ['completion_worse.completor.declared_function.enabled'] = true,
-          -- ['completion_worse.completor.docblock.enabled'] = true,
-          -- ['completion_worse.completor.doctrine_annotation.enabled'] = true,
-          -- ['completion_worse.completor.expression_name_search.enabled'] = true,
-          -- ['completion_worse.completor.imported_names.enabled'] = true,
-          -- ['completion_worse.completor.named_parameter.enabled'] = true,
-          -- ['completion_worse.completor.scf_class.enabled'] = true,
-          -- ['completion_worse.completor.subscript.enabled'] = true,
-          -- ['completion_worse.completor.symfony.enabled'] = true,
-          -- ['completion_worse.completor.type.enabled'] = true,
-          -- ['completion_worse.completor.use.enabled'] = true,
-          -- ['completion_worse.snippets'] = true,
-        },
       },
     },
   },

@@ -7,34 +7,14 @@ return {
     { '<leader>ws', '<cmd>SessionSave<CR>', desc = '[S]ave session' },
     { '<leader>ta', '<cmd>SessionToggleAutoSave<CR>', desc = '[T]oggle [a]utosave' },
   },
-  dependencies = {
-    {
-      'kazhala/close-buffers.nvim',
-      config = function()
-        require('close_buffers').setup {
-          -- preserve_window_layout = { 'this' },
-          next_buffer_cmd = function(windows)
-            require('buffer_manager.ui').nav_prev()
-            -- require('cybu').cycle 'prev'
-            local bufnr = vim.api.nvim_get_current_buf()
-
-            for _, window in ipairs(windows) do
-              vim.api.nvim_win_set_buf(window, bufnr)
-            end
-          end,
-        }
-      end,
-    },
-  },
   opts = {
-    -- bypass_save_filetypes = { 'alpha', 'dashboard' }, -- or whatever dashboard you use
-    -- auto_restore = false,
-    auto_session_enabled = true,
-    auto_save_enabled = false,
-    auto_restore_enabled = false,
-    auto_session_use_git_branch = true,
+    bypass_save_filetypes = { 'alpha', 'dashboard' }, -- or whatever dashboard you use
+    enabled = true,
+    auto_save = false,
+    auto_restore = false,
+    git_use_branch_name = true,
     suppressed_dirs = { '/', '~/' },
-    cwd_change_handling = true,
+    cwd_change_handling = false,
     session_lens = {
       load_on_setup = true, -- Initialize on startup (requires Telescope)
       previewer = false, -- File preview for session picker
@@ -55,8 +35,6 @@ return {
     pre_save_cmds = {
       -- 'tabdo Neotree close',
       'Neotree close',
-      'BDelete! nameless', -- delete quickfixlist ant other empty buffers
-      -- 'BDelete! hidden',
       'cclose',
     },
     -- Save quickfix list and open it when restoring the session

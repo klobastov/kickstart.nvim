@@ -59,7 +59,7 @@ return {
       --     return vim.fn.executable 'make' == 1
       --   end,
       -- },
-      -- { 'nvim-telescope/telescope-ui-select.nvim' },
+      { 'nvim-telescope/telescope-ui-select.nvim' },
 
       -- Useful for getting pretty icons, but requires a Nerd Font.
       { 'nvim-tree/nvim-web-devicons', enabled = vim.g.have_nerd_font },
@@ -120,9 +120,9 @@ return {
           path_display = path_display,
         },
         extensions = {
-          -- ['ui-select'] = {
-          --   require('telescope.themes').get_dropdown(),
-          -- },
+          ['ui-select'] = {
+            require('telescope.themes').get_dropdown(),
+          },
           -- fzf = {
           --   fuzzy = true, -- false will only do exact matching
           --   override_generic_sorter = true, -- override the generic sorter
@@ -149,7 +149,7 @@ return {
 
       -- Enable Telescope extensions if they are installed
       pcall(require('telescope').load_extension, 'themes')
-      -- pcall(require('telescope').load_extension, 'ui-select')
+      pcall(require('telescope').load_extension, 'ui-select')
       -- pcall(require('telescope').load_extension, 'fzf')
       -- pcall(require('telescope').load_extension, 'notify')
       pcall(require('telescope').load_extension, 'live_grep_args')

@@ -34,18 +34,13 @@ vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower win
 vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
 
 -- Buffers navigation
--- vim.keymap.set('n', '<TAB>', '<cmd>BufferLineCycleNext<CR>')
--- vim.keymap.set('n', '<S-TAB>', '<cmd>BufferLineCyclePrev<CR>')
-vim.keymap.set('n', '<C-q>', [[<cmd>lua require('close_buffers').delete({type = 'this'})<cr>]], { noremap = true, silent = true })
--- vim.keymap.set('n', '<Leader>bb', '<cmd>BufferLinePick<CR>', { desc = 'Pick open [b]uffer' })
--- vim.keymap.set('n', '<Leader>bc', '<cmd>BufferLinePickClose<CR>', { desc = 'Pick [c]lose buffer' })
--- vim.keymap.set('n', '<Leader>bd', '<cmd>BufferLineCloseOthers<CR>', { desc = '[D]elete other [b]uffers' })
--- vim.keymap.set('n', '<Leader>br', '<cmd>BufferLineCloseRight<CR>', { desc = 'Delete [r]ight buffers' })
--- vim.keymap.set('n', '<Leader>bl', '<cmd>BufferLineCloseLeft<CR>', { desc = 'Delete [l]eft buffers' })
+vim.keymap.set('n', '<C-q>', '<cmd>bp<bar>bd#<cr>', { noremap = true, silent = true })
 
 -- Tabs navigation
 vim.keymap.set('n', 'H', '<cmd>tabprevious<CR>', { desc = 'Swith previous tab' })
 vim.keymap.set('n', 'L', '<cmd>tabnext<CR>', { desc = 'Switch next tab' })
+vim.keymap.set('n', 'Q', '<cmd>tabc<CR>', { desc = 'Close tab' })
+vim.keymap.set('n', 'T', '<cmd>tabnew<CR>', { desc = 'Crate tab' })
 
 -- @todo add Ctrl-F4 bind
 -- vim.keymap.set('n', '<Leader>1', '<cmd>BufferLineGoToBuffer 1<CR>', { desc = 'Open buffer 1' })
@@ -58,6 +53,9 @@ vim.keymap.set('n', 'L', '<cmd>tabnext<CR>', { desc = 'Switch next tab' })
 -- vim.keymap.set('n', '<Leader>8', '<cmd>BufferLineGoToBuffer 8<CR>', { desc = 'Open buffer 8' })
 -- vim.keymap.set('n', '<Leader>9', '<cmd>BufferLineGoToBuffer 9<CR>', { desc = 'Open buffer 9' })
 
+-- Try disable close window for prevent exit vim
+vim.keymap.set('n', '<C-w>q', '<nop>')
+vim.keymap.set('n', '<C-w><C-q>', '<nop>')
 -- Try fix C-Space as WORD [w] motion
 vim.keymap.set('n', '<C-Space>', '<nop>')
 vim.keymap.set('n', '<C-S-Space>', '<nop>')

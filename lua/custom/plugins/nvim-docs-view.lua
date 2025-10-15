@@ -1,6 +1,7 @@
 return {
   'amrbashir/nvim-docs-view',
   lazy = true,
+  enabled = false,
   cmd = 'DocsViewUpdate',
   opts = {
     position = 'right',

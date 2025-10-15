@@ -1,4 +1,4 @@
--- LSP Plugins
+-- LSP PluginsLsp
 return {
   {
     -- `lazydev` configures Lua LSP for your Neovim config, runtime and plugins
@@ -117,7 +117,7 @@ return {
           --
           -- When you move your cursor, the highlights will be cleared (the second autocommand).
           local client = vim.lsp.get_client_by_id(event.data.client_id)
-          if client and client.supports_method(vim.lsp.protocol.Methods.textDocument_documentHighlight) then
+          if client and client:supports_method(vim.lsp.protocol.Methods.textDocument_documentHighlight) then
             local highlight_augroup = vim.api.nvim_create_augroup('kickstart-lsp-highlight', { clear = false })
             vim.api.nvim_create_autocmd({ 'CursorHold', 'CursorHoldI' }, {
               buffer = event.buf,
@@ -144,7 +144,7 @@ return {
           -- code, if the language server you are using supports them
           --
           -- This may be unwanted, since they displace some of your code
-          if client and client.supports_method(vim.lsp.protocol.Methods.textDocument_inlayHint) then
+          if client and client:supports_method(vim.lsp.protocol.Methods.textDocument_inlayHint) then
             map('<leader>th', function()
               vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled { bufnr = event.buf })
             end, '[T]oggle Inlay [H]ints')
@@ -157,7 +157,12 @@ return {
       --  When you add nvim-cmp, luasnip, etc. Neovim now has *more* capabilities.
       --  So, we create new capabilities with nvim cmp, and then broadcast that to the servers.
       local capabilities = vim.lsp.protocol.make_client_capabilities()
-      capabilities = vim.tbl_deep_extend('force', capabilities, require('cmp_nvim_lsp').default_capabilities())
+      local cmp_capabilities = require('cmp_nvim_lsp').default_capabilities()
+      cmp_capabilities.textDocument.completion.completionItem.snippetSupport = true
+      cmp_capabilities.textDocument.completion.completionItem.resolveSupport = {
+        properties = { 'documentation', 'detail', 'additionalTextEdits' },
+      }
+      capabilities = vim.tbl_deep_extend('force', capabilities, cmp_capabilities)
 
       -- Enable the following language servers
       --  Feel free to add/remove any LSPs that you want here. They will automatically be installed.
@@ -230,7 +235,6 @@ return {
           filetypes = { 'php' },
           cmd = { 'psalm', '--language-server' },
           requiredFiles = { 'psalm.xml' },
-          autostart = true,
         },
         yamlls = {
           on_attach = function(client)
@@ -259,6 +263,40 @@ return {
             },
           },
         },
+        -- harper_ls = {
+        --   -- временно оставлю только для git commit
+        --   filetypes = { 'gitcommit' },
+        --   settings = {
+        --     ['harper-ls'] = {
+        --       userDictPath = vim.o.spellfile,
+        --       fileDictPath = vim.fn.getcwd() .. '/.harper',
+        --       linters = {
+        --         SpellCheck = true,
+        --         SentenceCapitalization = false,
+        --         SpelledNumbers = true,
+        --         AnA = false,
+        --         UnclosedQuotes = true,
+        --         WrongQuotes = true,
+        --         LongSentences = false,
+        --         RepeatedWords = true,
+        --         Spaces = false,
+        --         Matcher = true,
+        --         CorrectNumberSuffix = true,
+        --         ExplanationMarks = true,
+        --       },
+        --       codeActions = {
+        --         ForceStable = false,
+        --       },
+        --       markdown = {
+        --         IgnoreLinkTitle = true,
+        --       },
+        --       diagnosticSeverity = 'hint',
+        --       isolateEnglish = false,
+        --       dialect = 'American',
+        --       maxFileLength = 120000,
+        --     },
+        --   },
+        -- },
       }
 
       -- Ensure the servers and tools above are installed
@@ -284,6 +322,7 @@ return {
         'markdownlint',
         'sql-formatter',
         'prettierd',
+        -- 'harper-ls',
 
         --'sqlfluff',
         --'sqlfmt',
@@ -292,6 +331,9 @@ return {
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
       require('mason-lspconfig').setup {
+        automatic_enable = {
+          exclude = { 'psalm' },
+        },
         handlers = {
           function(server_name)
             local server = servers[server_name] or {}

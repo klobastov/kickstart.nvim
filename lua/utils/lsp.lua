@@ -27,7 +27,7 @@ function M.on_rename(from, to)
   local bufnr = vim.api.nvim_get_current_buf()
   local clients = vim.lsp.get_clients { bufnr = bufnr }
   for _, client in ipairs(clients) do
-    if client.supports_method 'workspace/willRenameFiles' then
+    if client:supports_method 'workspace/willRenameFiles' then
       ---@diagnostic disable-next-line: invisible
       local resp = client.request_sync('workspace/willRenameFiles', {
         files = {

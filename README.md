@@ -1,6 +1,7 @@
 # kickstart-modular.nvim
 
-## Instalation
+## Installation
+
 * `:Mason`
 * install `phpactor` as LSP, install `php-cs-fixer` as Formatter
 * `composer global require --dev phpstan/phpstan`
@@ -20,5 +21,5 @@ If php-cs-fixer is in $PATH, you don't need to define line below
 
 ## Description
 
-PhpActor used php-cs-fixer via LSP for auto formatting. But for able to see warrnigns PhpActor used same binary, chosen in .phpactor config.
+PhpActor used php-cs-fixer via LSP for auto formatting. But for able to see warnings PhpActor used same binary, chosen in .phpactor config.
 PhpActor also used PhpStan from global composer package instalation.

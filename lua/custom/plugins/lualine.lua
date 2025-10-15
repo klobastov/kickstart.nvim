@@ -1,37 +1,5 @@
 return {
   {
-    'vimpostor/vim-tpipeline',
-    event = 'VeryLazy',
-    init = function()
-      vim.g.tpipeline_autoembed = 0
-      vim.g.tpipeline_statusline = ''
-    end,
-    config = function()
-      vim.cmd.hi { 'link', 'StatusLine', 'WinSeparator' }
-      vim.g.tpipeline_statusline = ''
-      vim.o.laststatus = 0
-      vim.defer_fn(function()
-        vim.o.laststatus = 0
-      end, 0)
-      vim.o.fillchars = 'stl:─,stlnc:─'
-      vim.api.nvim_create_autocmd('OptionSet', {
-        pattern = 'laststatus',
-        callback = function()
-          if vim.o.laststatus ~= 0 then
-            -- vim.notify 'Auto-setting laststatus to 0'
-            vim.o.laststatus = 0
-          end
-        end,
-      })
-    end,
-    cond = function()
-      return vim.env.TMUX ~= nil
-    end,
-    dependencies = {
-      'nvim-lualine/lualine.nvim',
-    },
-  },
-  {
     'nvim-lualine/lualine.nvim',
     event = 'VeryLazy',
     dependencies = {
@@ -42,7 +10,7 @@ return {
       icons_enabled = vim.g.have_nerd_font,
       theme = 'solarized_light',
       disabled_filetypes = {
-        statusline = {},
+        statusline = { 'neo-tree' },
         winbar = {},
       },
       ignore_focus = {},
@@ -55,14 +23,14 @@ return {
         lualine_b = { 'branch' },
         lualine_c = {
           'macro_recording',
-          '%S', -- requires showcmdloc=statusline
+          '%S',
           -- function()
           --   return require('auto-session.lib').current_session_name(true)
           -- end,
         },
         lualine_x = {
+          '%S', -- showcmd, requires showcmdloc=statusline
           'filetype',
-          'encoding',
         },
         lualine_y = {
           'progress',
@@ -95,5 +63,37 @@ return {
         end
       end
     end,
+  },
+  {
+    'vimpostor/vim-tpipeline',
+    event = 'VeryLazy',
+    init = function()
+      vim.g.tpipeline_autoembed = 0
+      vim.g.tpipeline_statusline = ''
+    end,
+    config = function()
+      vim.cmd.hi { 'link', 'StatusLine', 'WinSeparator' }
+      vim.g.tpipeline_statusline = ''
+      vim.o.laststatus = 0
+      vim.defer_fn(function()
+        vim.o.laststatus = 0
+      end, 0)
+      vim.o.fillchars = 'stl:─,stlnc:─'
+      vim.api.nvim_create_autocmd('OptionSet', {
+        pattern = 'laststatus',
+        callback = function()
+          if vim.o.laststatus ~= 0 then
+            -- vim.notify 'Auto-setting laststatus to 0'
+            vim.o.laststatus = 0
+          end
+        end,
+      })
+    end,
+    cond = function()
+      return vim.env.TMUX ~= nil
+    end,
+    dependencies = {
+      'nvim-lualine/lualine.nvim',
+    },
   },
 }

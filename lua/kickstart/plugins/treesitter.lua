@@ -35,10 +35,6 @@ return {
       },
       indent = {
         enable = true,
-        disable = {},
-      },
-      matchup = {
-        enable = true,
       },
     },
     config = function(_, opts)

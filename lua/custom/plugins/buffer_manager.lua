@@ -3,23 +3,23 @@ return {
   event = 'VeryLazy',
   dependencies = {
     'nvim-lua/plenary.nvim',
-    {
-      'ghillb/cybu.nvim',
-      opts = {
-        style = {
-          path = 'relative', -- absolute, relative, tail (filename only),
-          path_abbreviation = 'none', -- none, shortened
-          padding = 1,
-          hide_buffer_id = false,
-        },
-        display_time = 1200,
-        exclude = {
-          'neo-tree',
-          'qf',
-          'neo-term',
-        },
-      },
-    },
+    -- {
+    --   'ghillb/cybu.nvim',
+    --   opts = {
+    --     style = {
+    --       path = 'relative', -- absolute, relative, tail (filename only),
+    --       path_abbreviation = 'none', -- none, shortened
+    --       padding = 1,
+    --       hide_buffer_id = false,
+    --     },
+    --     display_time = 1200,
+    --     exclude = {
+    --       'neo-tree',
+    --       'qf',
+    --       'neo-term',
+    --     },
+    --   },
+    -- },
   },
   opts = {
     -- order_buffers = 'bufnr',
@@ -51,10 +51,10 @@ return {
   config = function(_, opts)
     require('buffer_manager').setup(opts)
 
-    vim.api.nvim_command [[
-      autocmd FileType buffer_manager vnoremap J :m '>+1<CR>gv=gv
-      autocmd FileType buffer_manager vnoremap K :m '<-2<CR>gv=gv
-    ]]
+    -- vim.api.nvim_command [[
+    --   autocmd FileType buffer_manager vnoremap J :m '>+1<CR>gv=gv
+    --   autocmd FileType buffer_manager vnoremap K :m '<-2<CR>gv=gv
+    -- ]]
   end,
   keys = {
     {
