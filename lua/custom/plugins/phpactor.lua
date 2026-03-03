@@ -13,12 +13,12 @@ return {
     keys = {
       { '<Leader>ll', '<cmd>PhpActor context_menu<CR>', buffer = true, noremap = true, silent = true, desc = 'PhpActor: context [A]ctions', ft = { 'php' } },
     },
-    cmd = { 'PhpActor' },
+    -- cmd = { 'PhpActor' },
     opts = {
       install = {
-        path = '/opt/phpactor/',
+        path = vim.fn.stdpath 'data' .. '/share_opt/',
         branch = 'master',
-        bin = '/opt/phpactor/bin/phpactor',
+        bin = vim.fn.stdpath 'data' .. '/share_opt/phpactor/bin/phpactor',
         php_bin = 'php',
         composer_bin = 'composer',
         git_bin = 'git',
@@ -26,6 +26,7 @@ return {
       },
       lspconfig = {
         enabled = true,
+        options = {},
       },
     },
   },

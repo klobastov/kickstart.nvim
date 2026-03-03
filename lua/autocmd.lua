@@ -22,6 +22,12 @@ local user_grp = augroup('UserGroup', { clear = true })
 --     vim.opt_local.signcolumn = 'no'
 --   end,
 -- })
+autocmd({ 'BufNewFile', 'BufRead' }, {
+  desc = 'Highlight avro as json',
+  pattern = '*.avsc',
+  command = 'setfiletype json',
+})
+
 usercmd('FormatDisable', function(args)
   if args.bang then
     -- FormatDisable! will disable formatting just for this buffer

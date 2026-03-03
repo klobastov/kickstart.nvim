@@ -46,19 +46,10 @@ return {
     dependencies = {
       { 'nvim-lua/plenary.nvim' },
       { 'andrew-george/telescope-themes' },
-      -- { -- If encountering errors, see telescope-fzf-native README for installation instructions
-      --   'nvim-telescope/telescope-fzf-native.nvim',
-      --
-      --   -- `build` is used to run some command when the plugin is installed/updated.
-      --   -- This is only run then, not every time Neovim starts up.
-      --   build = 'make',
-      --
-      --   -- `cond` is a condition used to determine whether this plugin should be
-      --   -- installed and loaded.
-      --   cond = function()
-      --     return vim.fn.executable 'make' == 1
-      --   end,
-      -- },
+      { -- If encountering errors, see telescope-fzf-native README for installation instructions
+        'nvim-telescope/telescope-fzf-native.nvim',
+        build = 'cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release --target install',
+      },
       { 'nvim-telescope/telescope-ui-select.nvim' },
 
       -- Useful for getting pretty icons, but requires a Nerd Font.
@@ -96,15 +87,27 @@ return {
         --     i = { ['<c-enter>'] = 'to_fuzzy_refine' },
         --   },
         -- },
-        -- pickers = {}
+        pickers = {
+          buffers = {
+            mappings = {
+              i = {
+                ['<c-w>'] = 'delete_buffer',
+              },
+            },
+          },
+        },
         defaults = {
           -- file_ignore_patterns = { 'node_modules', 'vendor', 'cache' },
           file_ignore_patterns = { 'node_modules', 'cache' },
           mappings = {
+            -- n = {
+            -- ['<Tab>'] = false,
+            -- },
             i = {
               ['<C-j>'] = require('telescope.actions').move_selection_next,
               ['<C-k>'] = require('telescope.actions').move_selection_previous,
               ['<esc>'] = require('telescope.actions').close,
+              -- ['<Tab>'] = false,
             },
           },
           layout_strategy = 'horizontal',
@@ -123,19 +126,18 @@ return {
           ['ui-select'] = {
             require('telescope.themes').get_dropdown(),
           },
-          -- fzf = {
-          --   fuzzy = true, -- false will only do exact matching
-          --   override_generic_sorter = true, -- override the generic sorter
-          --   override_file_sorter = true, -- override the file sorter
-          --   case_mode = 'smart_case', -- or "ignore_case" or "respect_case"
-          --   -- the default case_mode is "smart_case"
-          -- },
+          fzf = {
+            fuzzy = true, -- false will only do exact matching
+            override_generic_sorter = true, -- override the generic sorter
+            override_file_sorter = true, -- override the file sorter
+            case_mode = 'smart_case', -- or "ignore_case" or "respect_case"
+          },
           live_grep_args = {
             auto_quoting = true,
             mappings = { -- extend mappings
               i = {
                 ['<C-e>'] = require('telescope-live-grep-args.actions').quote_prompt(),
-                ['<C-i>'] = require('telescope-live-grep-args.actions').quote_prompt { postfix = ' --iglob ' },
+                -- ['<C-i>'] = require('telescope-live-grep-args.actions').quote_prompt { postfix = ' --iglob ' },
                 -- freeze the current list and start a fuzzy search in the frozen list
                 ['<C-space>'] = require('telescope.actions').to_fuzzy_refine,
               },
@@ -150,7 +152,7 @@ return {
       -- Enable Telescope extensions if they are installed
       pcall(require('telescope').load_extension, 'themes')
       pcall(require('telescope').load_extension, 'ui-select')
-      -- pcall(require('telescope').load_extension, 'fzf')
+      pcall(require('telescope').load_extension, 'fzf')
       -- pcall(require('telescope').load_extension, 'notify')
       pcall(require('telescope').load_extension, 'live_grep_args')
 
@@ -160,12 +162,41 @@ return {
       vim.keymap.set('n', '<leader>sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
       vim.keymap.set('n', '<leader>sk', builtin.keymaps, { desc = '[S]earch [K]eymaps' })
 
-      vim.keymap.set('n', '<leader>sff', builtin.find_files, { desc = '[S]earch [F]iles' })
+      vim.keymap.set('n', '<leader>ss', builtin.find_files, { desc = '[S]earch [F]iles' })
       vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
       vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
 
+      -- Open buffers
+      vim.keymap.set('n', '<C-c>', function()
+        builtin.buffers {
+          sort_mru = true, -- сортировать по недавнему использованию
+          ignore_current_buffer = false, -- показывать текущий буфер
+          previewer = true, -- отключить превью для буферов
+          layout_config = {
+            width = 0.8,
+            height = 0.6,
+          },
+          prompt_title = 'Current buffers (recent sort)',
+        }
+      end, { desc = '[S]earch [I]gnored' })
       -- Add a way to search ignored files
-      vim.keymap.set('n', '<leader>sfi', function()
+      vim.keymap.set('n', '<leader><leader>', function()
+        builtin.find_files {
+          -- cwd = '~/projects/',
+          hidden = true,
+          no_ignore = true,
+          previewer = false,
+          prompt_title = 'Globally Find file (include ignored, hidden)',
+          -- Change strategy to 'horizontal', 'vertical', 'center', or 'flex'
+          -- layout_strategy = 'center',
+          layout_config = {
+            width = 0.5,
+            height = 0.6,
+          },
+        }
+      end, { desc = '[S]earch [I]gnored' })
+      -- Add a way to search ignored files
+      vim.keymap.set('n', '<leader>si', function()
         builtin.find_files {
           hidden = true,
           no_ignore = true,
@@ -174,7 +205,7 @@ return {
       end, { desc = '[S]earch [I]gnored' })
 
       -- Slightly advanced example of overriding default behavior and theme
-      vim.keymap.set('n', '<leader>ss', function()
+      vim.keymap.set('n', '<leader>sc', function()
         builtin.current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {
           winblend = 10,
           previewer = false,

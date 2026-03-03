@@ -56,15 +56,20 @@ vim.o.updatetime = 250 -- ms to wait for trigger an event
 -- Editor
 -----------------------------------------------------------
 vim.o.modeline = false
-vim.o.encoding = 'utf-8'
-vim.o.fileencoding = 'utf-8'
+vim.opt.encoding = 'utf-8'
+vim.opt.fileencoding = 'utf-8'
+vim.opt.ambiwidth = 'single' -- Как обрабатывать восточноазиатские символы
+vim.opt.emoji = true -- Включить emoji
+vim.opt.guifontwide = 'Noto Sans CJK SC' -- Fallback для восточноазиатских символов
+-- Отключить замену непечатаемых символов
+vim.opt.display = 'lastline,uhex' -- Показывать hex для неотображаемых символов
 vim.o.startofline = false -- Additional no next option
 vim.o.virtualedit = 'all' -- Save cursor position on movement
 vim.o.timeoutlen = 300 -- Decrease mapped sequence wait time
 vim.o.relativenumber = true -- You can also add relative line numbers, to help with jumping.
 vim.o.showmode = false -- Don't show the mode, since it's already in the status line
 vim.o.signcolumn = 'yes:1' -- Keep signcolumn on by default
-vim.opt.list = true -- Sets how neovim will display certain whitespace characters in the editor.opt
+vim.opt.list = false -- Не показывать скрытые символы
 -- Show those damn hidden characters
 vim.opt.listchars = 'tab: >,nbsp:¬,extends:»,precedes:«,trail:•'
 vim.o.cursorline = false -- Show which line your cursor is on
@@ -72,7 +77,8 @@ vim.o.scrolloff = 1 -- Minimal number of screen lines to keep above and below th
 -- vim.o.scrollback = 3
 vim.o.inccommand = 'split' -- Preview substitutions live, as you type!
 -- vim.o.showcmdloc = 'statusline' -- Status line of the current window
-
+-- Diff settings
+vim.opt.diffopt = 'internal,filler,closeoff'
 -- Use wide tabs
 vim.o.smartindent = false
 vim.o.autoindent = true
@@ -96,13 +102,27 @@ vim.o.formatoptions = vim.o.formatoptions .. 'b' -- auto-wrap in insert mode, an
 -- Backspace over newline
 vim.o.backspace = 'indent,eol,start'
 vim.diagnostic.config {
-  float = {
-    source = true,
+  virtual_text = false, -- часто конфликтует с float окнами
+  signs = {
+    text = {
+      [vim.diagnostic.severity.ERROR] = '',
+      [vim.diagnostic.severity.WARN] = '',
+      [vim.diagnostic.severity.HINT] = '',
+      [vim.diagnostic.severity.INFO] = '',
+    },
   },
-  signs = true,
+  update_in_insert = false,
+  underline = true,
   severity_sort = true,
+  float = {
+    focusable = false,
+    style = 'minimal',
+    border = 'single', -- или "single", "double", "shadow"
+    source = 'always', -- или "if_many"
+    header = '',
+    prefix = '',
+  },
 }
-
 --spell
 vim.opt.spelllang = { 'en_us', 'ru' }
 vim.opt.spelloptions = { 'camel' }
@@ -111,12 +131,13 @@ vim.opt.spellfile = {
   vim.fn.stdpath 'config' .. '/spell/en.utf-8.add',
 }
 vim.o.spellcapcheck = '' -- don't check for capital letters at start of sentence
-vim.o.fileformats = 'unix,mac,dos'
+vim.o.fileformats = 'unix,dos,mac'
 vim.o.spell = true
 
 -- folding
 vim.o.foldenable = false -- Enable folding.
 vim.o.foldcolumn = '4' -- Show folding signs.
+vim.o.foldcolumn = '0' -- Show folding signs.
 -- Folds with a level > foldlevel will be closed
 -- Setting 0 will close all folds
 -- Setting 99 ensures folds are open by default
@@ -132,10 +153,25 @@ vim.o.foldopen = 'insert,search,block,jump,quickfix' -- Which commands open fold
 vim.o.foldclose = 'all' -- Which commands open folds if the cursor moves into a closed fold.
 vim.o.fillchars = [[eob: ,fold: ,foldopen:,foldsep: ,foldclose:]]
 
-vim.o.emoji = false
 -----------------------------------------------------------
 -- Plugins [Auto-sessions]
 -----------------------------------------------------------
 vim.o.sessionoptions = 'blank,buffers,curdir,folds,help,tabpages,winsize,winpos,terminal,localoptions'
+vim.opt.fillchars = {
+  horiz = '─',
+  horizup = '┴',
+  horizdown = '┬',
+  vert = '│',
+  vertleft = '┤',
+  vertright = '├',
+  verthoriz = '┼',
+  fold = ' ',
+  foldopen = '▾',
+  foldclose = '▸',
+  foldsep = '│',
+  diff = '╱',
+  msgsep = '─',
+  -- eob = ' ',
+}
 
 -- vim: ts=2 sts=2 sw=2 et

@@ -11,14 +11,17 @@ return {
     bypass_save_filetypes = { 'alpha', 'dashboard' }, -- or whatever dashboard you use
     enabled = true,
     auto_save = false,
-    auto_restore = false,
+    auto_create = true,
+    auto_restore = true,
+    auto_restore_last_session = false,
+
+    -- Git / Session naming
     git_use_branch_name = true,
+
     suppressed_dirs = { '/', '~/' },
     cwd_change_handling = false,
     session_lens = {
-      load_on_setup = true, -- Initialize on startup (requires Telescope)
-      previewer = false, -- File preview for session picker
-
+      picker = 'telescope',
       mappings = {
         -- Mode can be a string or a table, e.g. {"i", "n"} for both insert and normal mode
         delete_session = { 'i', '<C-D>' },

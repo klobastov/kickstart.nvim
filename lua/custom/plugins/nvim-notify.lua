@@ -1,6 +1,6 @@
 return {
   'rcarriga/nvim-notify',
-  enabled = false,
+  enabled = true,
   opts = {
     background_colour = 'NotifyBackground',
     fps = 30,

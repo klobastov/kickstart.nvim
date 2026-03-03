@@ -21,11 +21,6 @@ return {
       { 'williamboman/mason.nvim', config = true }, -- NOTE: Must be loaded before dependants
       'williamboman/mason-lspconfig.nvim',
       'WhoIsSethDaniel/mason-tool-installer.nvim',
-
-      -- Useful status updates for LSP.
-      -- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
-      { 'j-hui/fidget.nvim', opts = {} },
-
       -- Allows extra capabilities provided by nvim-cmp
       'hrsh7th/cmp-nvim-lsp',
       'b0o/schemastore.nvim',
@@ -86,7 +81,12 @@ return {
 
           -- Jump to the implementation of the word under your cursor.
           --  Useful when your language has ways of declaring types without an actual implementation.
-          map('gI', require('telescope.builtin').lsp_implementations, '[G]oto [I]mplementation')
+          -- map('gI', require('telescope.builtin').lsp_implementations, '[G]oto [I]mplementation')
+          map(
+            'gI',
+            "<cmd>lua require('telescope.builtin').lsp_implementations { path_display = { 'truncate' }, show_line = false }<CR>",
+            '[G]oto [I]mplementation'
+          )
 
           -- Jump to the type of the word under your cursor.
           --  Useful when you're not sure what type a variable is and you want to see
@@ -190,7 +190,7 @@ return {
 
         lua_ls = {
           -- cmd = {...},
-          -- filetypes = { ...},
+          filetypes = { 'lua' },
           -- capabilities = {},
           settings = {
             Lua = {
@@ -332,7 +332,7 @@ return {
 
       require('mason-lspconfig').setup {
         automatic_enable = {
-          exclude = { 'psalm' },
+          exclude = { 'psalm', 'stylua' },
         },
         handlers = {
           function(server_name)

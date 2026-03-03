@@ -1,3 +1,19 @@
+local function short_session_name()
+  local full_name = require('auto-session.lib').current_session_name(true)
+  if not full_name or full_name == '' then
+    return ''
+  end
+
+  -- Оставляем только имя файла без пути
+  local name = full_name:match '([^/\\]+)$' or full_name
+
+  -- Укорачиваем слишком длинные имена
+  if #name > 20 then
+    return name:sub(1, 20)
+  end
+
+  return name
+end
 return {
   {
     'nvim-lualine/lualine.nvim',
@@ -6,38 +22,54 @@ return {
       { 'nvim-tree/nvim-web-devicons' },
       { 'yavorski/lualine-macro-recording.nvim' },
     },
-    opts = {
-      icons_enabled = vim.g.have_nerd_font,
-      theme = 'solarized_light',
-      disabled_filetypes = {
-        statusline = { 'neo-tree' },
-        winbar = {},
-      },
-      ignore_focus = {},
-      always_divide_middle = true,
-      refresh = {
-        statusline = 1000,
-      },
-      sections = {
-        lualine_a = { 'mode' },
-        lualine_b = { 'branch' },
-        lualine_c = {
-          'macro_recording',
-          '%S',
-          -- function()
-          --   return require('auto-session.lib').current_session_name(true)
-          -- end,
+    opts = function()
+      -- Простая функция определения темы
+      local function get_theme()
+        local handle = io.popen "readlink -f ~/.config/i3/colors-current 2>/dev/null | grep -o 'solarized-[a-z]*'"
+        if handle then
+          local theme = handle:read '*l'
+          handle:close()
+          if theme == 'solarized-light' then
+            return 'solarized_light'
+          end
+          if theme == 'solarized-dark' then
+            return 'solarized_dark'
+          end
+        end
+        return 'solarized_light' -- по умолчанию
+      end
+
+      return {
+        icons_enabled = vim.g.have_nerd_font,
+        theme = get_theme(),
+        disabled_filetypes = {
+          statusline = { 'neo-tree' },
+          winbar = {},
         },
-        lualine_x = {
-          '%S', -- showcmd, requires showcmdloc=statusline
-          'filetype',
+        ignore_focus = {},
+        always_divide_middle = true,
+        refresh = {
+          statusline = 1000,
         },
-        lualine_y = {
-          'progress',
+        sections = {
+          lualine_a = { 'mode' },
+          lualine_b = { 'branch' },
+          lualine_c = {
+            short_session_name,
+            'macro_recording',
+            '%S',
+          },
+          lualine_x = {
+            '%S',
+            'filetype',
+          },
+          lualine_y = {
+            'progress',
+          },
+          lualine_z = { 'location' },
         },
-        lualine_z = { 'location' },
-      },
-    },
+      }
+    end,
     config = function(_, opts)
       require('lualine').setup(opts)
 
@@ -72,18 +104,16 @@ return {
       vim.g.tpipeline_statusline = ''
     end,
     config = function()
-      vim.cmd.hi { 'link', 'StatusLine', 'WinSeparator' }
       vim.g.tpipeline_statusline = ''
       vim.o.laststatus = 0
       vim.defer_fn(function()
         vim.o.laststatus = 0
       end, 0)
-      vim.o.fillchars = 'stl:─,stlnc:─'
+      vim.o.fillchars = 'stl:─,stlnc:─,vert:│'
       vim.api.nvim_create_autocmd('OptionSet', {
         pattern = 'laststatus',
         callback = function()
           if vim.o.laststatus ~= 0 then
-            -- vim.notify 'Auto-setting laststatus to 0'
             vim.o.laststatus = 0
           end
         end,

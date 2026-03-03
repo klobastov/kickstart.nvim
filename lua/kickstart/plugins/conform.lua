@@ -70,6 +70,7 @@ return {
         scss = { 'prettierd' },
         css = { 'prettierd' },
         xml = { 'prettierd' },
+        json = { 'prettierd' },
         -- Conform can also run multiple formatters sequentially
         -- python = { "isort", "black" },
         --

@@ -7,6 +7,33 @@ return {
   { -- Adds git related signs to the gutter, as well as utilities for managing changes
     'lewis6991/gitsigns.nvim',
     opts = {
+      preview_config = {
+        -- Стили для popup окна
+        border = 'single', -- или 'single', 'double', 'shadow', 'none'
+        style = 'minimal',
+        relative = 'cursor',
+        row = 0,
+        col = 1,
+        title = 'Git Diff',
+        title_pos = 'center',
+
+        -- Настройки размера
+        width = 80,
+        height = 15,
+
+        -- Настройки окна
+        focusable = false,
+        zindex = 40,
+      },
+      -- Для inline blame
+      current_line_blame_opts = {
+        -- virt_text = true,
+        -- virt_text_pos = 'eol', -- или 'overlay', 'right_align'
+        delay = 1000,
+        ignore_whitespace = false,
+        virt_text_priority = 100,
+      },
+
       signs = {
         add = { text = '+' },
         change = { text = '~' },
@@ -23,7 +50,6 @@ return {
         changedelete = { text = '~' },
         untracked = { text = '┆' },
       },
-      signs_staged_enable = true,
       on_attach = function(bufnr)
         local gitsigns = require 'gitsigns'
 

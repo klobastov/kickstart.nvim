@@ -6,7 +6,6 @@ return {
     opts = {
       ensure_installed = {
         'bash',
-        'dap_repl',
         'diff',
         'lua',
         'luadoc',
@@ -20,7 +19,6 @@ return {
         'vim',
         'vimdoc',
       },
-      -- Autoinstall languages that are not installed
       auto_install = true,
       highlight = {
         enable = true,
@@ -31,16 +29,15 @@ return {
             return true
           end
         end,
-        additional_vim_regex_highlighting = false,
+        additional_vim_regex_highlighting = { 'markdown' },
       },
       indent = {
         enable = true,
       },
     },
     config = function(_, opts)
-      require('nvim-dap-repl-highlights').setup()
+      -- require('nvim-dap-repl-highlights').setup()
       require('nvim-treesitter.configs').setup(opts)
     end,
   },
 }
--- vim: ts=2 sts=2 sw=2 et
