@@ -199,6 +199,14 @@ return {
         },
       })
 
+      cmp.setup.filetype('codecompanion', {
+        sources = {
+          { name = 'codecompanion' },
+          { name = 'buffer' },
+          { name = 'fuzzy_path' },
+        },
+      })
+
       cmp.setup.filetype('php', {
         sources = {
           { name = 'codecompanion' },

@@ -8,23 +8,43 @@ return {
     { 'nvim-treesitter/nvim-treesitter', build = ':TSUpdate' },
     'ravitemer/codecompanion-history.nvim',
     { 'cairijun/codecompanion-agentskills.nvim' },
-    {
-      'Davidyz/VectorCode',
-      version = '*',
-      build = 'uv tool upgrade vectorcode',
-      cond = function()
-        return vim.fn.executable 'vectorcode' == 1
-      end,
-      opts = {
-        {
-          n_query = 1, -- number of retrieved documents
-          notify = true, -- enable notifications
-          timeout_ms = 5000, -- timeout in milliseconds for the query operation.
-          exclude_this = true, -- exclude the buffer from which the query is called.
-          async_backend = 'lsp', -- or "lsp"
-        },
-      },
-    },
+    -- {
+    --   'ravitemer/mcphub.nvim',
+    --   dependencies = {
+    --     'nvim-lua/plenary.nvim',
+    --   },
+    --   build = 'npm install -g mcp-hub@latest',
+    --   config = function()
+    --     require('mcphub').setup {
+    --       port = 3000, -- Port for the mcp-hub Express server
+    --       config = vim.fn.expand '~/.config/nvim/mcpservers.json',
+    --       log = {
+    --         level = vim.log.levels.WARN, -- Adjust verbosity (DEBUG, INFO, WARN, ERROR)
+    --         to_file = true, -- Log to ~/.local/state/nvim/mcphub.log
+    --       },
+    --       on_ready = function()
+    --         vim.notify('MCP Hub backend server is initialized and ready.', vim.log.levels.INFO)
+    --       end,
+    --     }
+    --   end,
+    -- },
+    -- {
+    --   'Davidyz/VectorCode',
+    --   version = '*',
+    --   build = 'uv tool upgrade vectorcode',
+    --   cond = function()
+    --     return vim.fn.executable 'vectorcode' == 1
+    --   end,
+    --   opts = {
+    --     {
+    --       n_query = 1, -- number of retrieved documents
+    --       notify = true, -- enable notifications
+    --       timeout_ms = 5000, -- timeout in milliseconds for the query operation.
+    --       exclude_this = true, -- exclude the buffer from which the query is called.
+    --       async_backend = 'lsp', -- or "lsp"
+    --     },
+    --   },
+    -- },
   },
   config = function()
     require('codecompanion').setup {
@@ -36,39 +56,26 @@ return {
             },
           },
         },
-        vectorcode = {
-          opts = {
-            tool_group = {
-              -- this will register a tool group called `@vectorcode_toolbox` that contains all 3 tools
-              enabled = false,
-              -- a list of extra tools that you want to include in `@vectorcode_toolbox`.
-              -- if you use @vectorcode_vectorise, it'll be very handy to include
-              -- `file_search` here.
-              extras = { 'file_search' },
-              collapse = false, -- whether the individual tools should be shown in the chat
-            },
-            tool_opts = {
-              ['*'] = {},
-              ls = {},
-              vectorise = {},
-              query = {
-                max_num = { chunk = -1, document = -1 },
-                default_num = { chunk = 50, document = 10 },
-                include_stderr = false,
-                use_lsp = false,
-                no_duplicate = true,
-                chunk_mode = false,
-                summarise = {
-                  enabled = true,
-                  adapter = 'opencode',
-                  query_augmented = true,
-                },
-              },
-              files_ls = {},
-              files_rm = {},
-            },
-          },
-        },
+        -- mcphub = {
+        --   callback = 'mcphub.extensions.codecompanion',
+        --   opts = {
+        --     make_vars = true,
+        --     make_slash_commands = true,
+        --     show_result_in_chat = true,
+        --   },
+        -- },
+        -- vectorcode = {
+        --   opts = {
+        --     tool_group = {
+        --       enabled = true,
+        --       -- a list of extra tools that you want to include in `@vectorcode_toolbox`.
+        --       -- if you use @vectorcode_vectorise, it'll be very handy to include
+        --       -- `file_search` here.
+        --       extras = { 'file_search' },
+        --       collapse = false, -- whether the individual tools should be shown in the chat
+        --     },
+        --   },
+        -- },
         history = {
           enabled = false,
           opts = {
@@ -94,15 +101,15 @@ return {
         action_palette = {
           width = 95,
           height = 10,
-          prompt = 'Prompt ', -- Prompt used for interactive LLM calls
-          provider = 'telescope', -- Can be "default", "telescope", "fzf_lua", "mini_pick" or "snacks". If not specified, the plugin will autodetect installed providers.
+          prompt = 'Prompt ',
+          provider = 'telescope',
           opts = {
-            show_preset_actions = true, -- Show the preset actions in the action palette?
-            show_preset_prompts = true, -- Show the preset prompts in the action palette?
-            title = 'CodeCompanion actions', -- The title of the action palette
+            show_preset_actions = true,
+            show_preset_prompts = true,
+            title = 'CodeCompanion actions',
           },
           chat = {
-            auto_scroll = false,
+            auto_scroll = true,
           },
         },
 
@@ -119,70 +126,154 @@ return {
           -- show_references = true,
           -- show_header_separator = false,
           show_settings = false,
-          show_reasoning = false,
-          fold_context = false,
+          show_reasoning = true,
+          fold_context = true,
         },
       },
 
       interactions = {
+        -- inline = {
+        --   adapter = 'vllm',
+        -- },
+        --
+        -- cmd = {
+        --   adapter = 'opencode_acp',
+        -- },
+        --
+        -- agent = {
+        --   adapter = 'opencode_acp',
+        -- },
+        --
         chat = {
           roles = {
             user = 'klobastov',
           },
           variables = {},
-          adapter = 'opencode',
-          tool_opts = {
-            ['*'] = {
-              auto_execute = true,
-            },
-          },
+          -- adapter = 'vllm',
+          adapter = 'opencode_acp',
           tools = {
-            auto_submit_errors = true, -- Send any errors to the LLM automatically?
-            auto_submit_success = true, -- Send any successful output to the LLM automatically?
+            --             groups = {
+            --               ['qwen_agent'] = {
+            --                 description = 'Agent optimized for Qwen3',
+            --                 system_prompt = [[
+            -- <instructions>
+            -- You are an AI coding assistant using Qwen3 model.
+            -- When using tools, you MUST output ONLY valid JSON in ONE LINE.
+            --
+            -- CRITICAL RULES:
+            -- 1. All tool calls must be SINGLE LINE JSON
+            -- 2. NO line breaks or indentation
+            -- 3. NO explanatory text before/after
+            -- 4. Format: {"name":"tool_name","arguments":{"param":"value"}}
+            --
+            -- Example: {"name":"run_command","arguments":{"cmd":"ls -la","flag":null}}
+            --
+            -- Available tools:
+            -- - run_command: execute shell commands
+            -- - read_file: read files
+            -- - create_file: create new files
+            -- - grep_search: search text
+            -- - file_search: find files
+            -- - insert_edit_into_file: edit files
+            -- </instructions>
+            -- ]],
+            --                 tools = {
+            --                   'run_command',
+            --                   'read_file',
+            --                   'create_file',
+            --                   'grep_search',
+            --                   'file_search',
+            --                   'insert_edit_into_file',
+            --                 },
+            --               },
+            --             },
             opts = {
-              -- xml = {
-              --   enabled = true,
-              --   tool_call_tag = 'tool',
-              --   tool_result_tag = 'tool_result',
-              -- },
-              completion_provider = 'cmp', -- blink|cmp|coc|default
-              default_tools = {
-                'agent_skills',
+              timeout = 30000,
+              completion_provider = 'cmp',
+            },
+
+            mcphub = {
+              callback = function()
+                return require 'mcphub.extensions.codecompanion'
+              end,
+              opts = {
+                -- If true, CodeCompanion will ask for approval before executing the MCP tool call
+                -- requires_approval = true,
+                -- Optional: Pass parameters like temperature to the underlying LLM if the chat strategy supports it
+                -- temperature = 0.7,
               },
             },
           },
-          -- opts = {
-          --   ---Decorate the user message before it's sent to the LLM
-          --   ---@param message string
-          --   ---@param adapter CodeCompanion.Adapter
-          --   ---@param context table
-          --   ---@return string
-          --   prompt_decorator = function(message, adapter, context)
-          --     return string.format([[<prompt>%s</prompt>]], message)
-          --   end,
-          -- },
         },
 
-        -- background = {
-        --   chat = {
-        --     opts = {
-        --       enabled = true,
-        --     },
-        --   },
-        -- },
+        background = {
+          adapter = 'vllm',
+          chat = {
+            opts = {
+              enabled = false,
+            },
+          },
+        },
       },
 
       adapters = {
+        -- http = {
+        --   opts = {
+        --     show_presets = false,
+        --     show_model_choices = false,
+        --     proxy = 'http://localhost:7999',
+        --   },
+        --   vllm = function()
+        --     return require('codecompanion.adapters').extend('openai_compatible', {
+        --       name = 'vllm', -- Внутреннее имя
+        --       formatted_name = 'vLLM', -- Отображаемое имя
+        --       env = {
+        --         url = 'http://localhost:8000',
+        --         chat_url = '/v1/chat/completions',
+        --       },
+        --       -- Параметры запросов по умолчанию
+        --       parameters = {
+        --         stream = true,
+        --         model = 'Qwen3-Coder-30B-A3B-Instruct',
+        --         -- temperature = 0.1,
+        --         max_tokens = 20000,
+        --         -- top_p = 0.1,
+        --       },
+        --
+        --       -- Схема параметров
+        --       schema = {
+        --         model = {
+        --           default = 'Qwen3-Coder-30B-A3B-Instruct',
+        --         },
+        --         -- temperature = {
+        --         --   default = 0.7,
+        --         --   range = { 0, 2 },
+        --         -- },
+        --         max_tokens = {
+        --           default = 20000,
+        --           range = { 1, 20000 },
+        --         },
+        --       },
+        --       headers = {
+        --         ['Content-Type'] = 'application/json',
+        --       },
+        --       -- Таймаут
+        --       timeout = 30000,
+        --     })
+        --   end,
+        -- },
         acp = {
-          opencode = function()
+          opencode_acp = function()
             return require('codecompanion.adapters').extend('opencode', {
-              timeout = 30000,
+              defaults = {
+                timeout = 60000,
+              },
+
               parameters = {
                 protocolVersion = 1,
                 clientCapabilities = {
                   fs = { readTextFile = true, writeTextFile = true },
                   terminal = false,
-                  tools = true,
                 },
                 clientInfo = {
                   name = 'CodeCompanion.nvim',
