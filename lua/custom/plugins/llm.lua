@@ -8,43 +8,43 @@ return {
     { 'nvim-treesitter/nvim-treesitter', build = ':TSUpdate' },
     'ravitemer/codecompanion-history.nvim',
     { 'cairijun/codecompanion-agentskills.nvim' },
-    -- {
-    --   'ravitemer/mcphub.nvim',
-    --   dependencies = {
-    --     'nvim-lua/plenary.nvim',
-    --   },
-    --   build = 'npm install -g mcp-hub@latest',
-    --   config = function()
-    --     require('mcphub').setup {
-    --       port = 3000, -- Port for the mcp-hub Express server
-    --       config = vim.fn.expand '~/.config/nvim/mcpservers.json',
-    --       log = {
-    --         level = vim.log.levels.WARN, -- Adjust verbosity (DEBUG, INFO, WARN, ERROR)
-    --         to_file = true, -- Log to ~/.local/state/nvim/mcphub.log
-    --       },
-    --       on_ready = function()
-    --         vim.notify('MCP Hub backend server is initialized and ready.', vim.log.levels.INFO)
-    --       end,
-    --     }
-    --   end,
-    -- },
-    -- {
-    --   'Davidyz/VectorCode',
-    --   version = '*',
-    --   build = 'uv tool upgrade vectorcode',
-    --   cond = function()
-    --     return vim.fn.executable 'vectorcode' == 1
-    --   end,
-    --   opts = {
-    --     {
-    --       n_query = 1, -- number of retrieved documents
-    --       notify = true, -- enable notifications
-    --       timeout_ms = 5000, -- timeout in milliseconds for the query operation.
-    --       exclude_this = true, -- exclude the buffer from which the query is called.
-    --       async_backend = 'lsp', -- or "lsp"
-    --     },
-    --   },
-    -- },
+    {
+      'ravitemer/mcphub.nvim',
+      dependencies = {
+        'nvim-lua/plenary.nvim',
+      },
+      build = 'npm install -g mcp-hub@latest',
+      config = function()
+        require('mcphub').setup {
+          port = 3000, -- Port for the mcp-hub Express server
+          config = vim.fn.expand '~/.config/nvim/mcpservers.json',
+          log = {
+            level = vim.log.levels.INFO, -- Adjust verbosity (DEBUG, INFO, WARN, ERROR)
+            to_file = false, -- Log to ~/.local/state/nvim/mcphub.log
+          },
+          on_ready = function()
+            vim.notify('MCP Hub backend server is initialized and ready.', vim.log.levels.INFO)
+          end,
+        }
+      end,
+    },
+    {
+      'Davidyz/VectorCode',
+      version = '*',
+      build = 'uv tool upgrade vectorcode',
+      cond = function()
+        return vim.fn.executable 'vectorcode' == 1
+      end,
+      opts = {
+        {
+          n_query = 1, -- number of retrieved documents
+          notify = true, -- enable notifications
+          timeout_ms = 5000, -- timeout in milliseconds for the query operation.
+          exclude_this = true, -- exclude the buffer from which the query is called.
+          async_backend = 'lsp', -- or "lsp"
+        },
+      },
+    },
   },
   config = function()
     require('codecompanion').setup {
@@ -56,26 +56,44 @@ return {
             },
           },
         },
-        -- mcphub = {
-        --   callback = 'mcphub.extensions.codecompanion',
-        --   opts = {
-        --     make_vars = true,
-        --     make_slash_commands = true,
-        --     show_result_in_chat = true,
-        --   },
-        -- },
-        -- vectorcode = {
-        --   opts = {
-        --     tool_group = {
-        --       enabled = true,
-        --       -- a list of extra tools that you want to include in `@vectorcode_toolbox`.
-        --       -- if you use @vectorcode_vectorise, it'll be very handy to include
-        --       -- `file_search` here.
-        --       extras = { 'file_search' },
-        --       collapse = false, -- whether the individual tools should be shown in the chat
-        --     },
-        --   },
-        -- },
+        mcphub = {
+          callback = 'mcphub.extensions.codecompanion',
+          opts = {
+            make_vars = true,
+            make_slash_commands = true,
+            show_result_in_chat = true,
+          },
+        },
+        vectorcode = {
+          opts = {
+            tool_group = {
+              enabled = true,
+              extras = { 'file_search' },
+              collapse = false,
+            },
+            tool_opts = {
+              ---@type VectorCode.CodeCompanion.ToolOpts
+              ['*'] = {},
+              ls = {},
+              vectorise = {},
+              query = {
+                max_num = { chunk = -1, document = -1 },
+                default_num = { chunk = 50, document = 10 },
+                include_stderr = false,
+                use_lsp = false,
+                no_duplicate = true,
+                chunk_mode = false,
+                summarise = {
+                  enabled = false,
+                  adapter = nil,
+                  query_augmented = true,
+                },
+              },
+              files_ls = {},
+              files_rm = {},
+            },
+          },
+        },
         history = {
           enabled = false,
           opts = {
@@ -123,8 +141,8 @@ return {
         },
 
         chat = {
-          -- show_references = true,
-          -- show_header_separator = false,
+          show_references = true,
+          show_header_separator = false,
           show_settings = false,
           show_reasoning = true,
           fold_context = true,
@@ -132,25 +150,22 @@ return {
       },
 
       interactions = {
-        -- inline = {
-        --   adapter = 'vllm',
-        -- },
-        --
-        -- cmd = {
-        --   adapter = 'opencode_acp',
-        -- },
-        --
-        -- agent = {
-        --   adapter = 'opencode_acp',
-        -- },
-        --
+        inline = {
+          adapter = 'vllm',
+        },
+
+        cmd = {
+          adapter = 'opencode_acp',
+        },
+
         chat = {
           roles = {
             user = 'klobastov',
           },
           variables = {},
-          -- adapter = 'vllm',
-          adapter = 'opencode_acp',
+
+          adapter = 'vllm',
+          -- adapter = 'opencode_acp',
           tools = {
             --             groups = {
             --               ['qwen_agent'] = {
@@ -188,6 +203,7 @@ return {
             --               },
             --             },
             opts = {
+              auto_submit = true,
               timeout = 30000,
               completion_provider = 'cmp',
             },
@@ -217,68 +233,46 @@ return {
       },
 
       adapters = {
-        -- http = {
-        --   opts = {
-        --     show_presets = false,
-        --     show_model_choices = false,
-        --     proxy = 'http://localhost:7999',
-        --   },
-        --   vllm = function()
-        --     return require('codecompanion.adapters').extend('openai_compatible', {
-        --       name = 'vllm', -- Внутреннее имя
-        --       formatted_name = 'vLLM', -- Отображаемое имя
-        --       env = {
-        --         url = 'http://localhost:8000',
-        --         chat_url = '/v1/chat/completions',
-        --       },
-        --       -- Параметры запросов по умолчанию
-        --       parameters = {
-        --         stream = true,
-        --         model = 'Qwen3-Coder-30B-A3B-Instruct',
-        --         -- temperature = 0.1,
-        --         max_tokens = 20000,
-        --         -- top_p = 0.1,
-        --       },
-        --
-        --       -- Схема параметров
-        --       schema = {
-        --         model = {
-        --           default = 'Qwen3-Coder-30B-A3B-Instruct',
-        --         },
-        --         -- temperature = {
-        --         --   default = 0.7,
-        --         --   range = { 0, 2 },
-        --         -- },
-        --         max_tokens = {
-        --           default = 20000,
-        --           range = { 1, 20000 },
-        --         },
-        --       },
-        --       headers = {
-        --         ['Content-Type'] = 'application/json',
-        --       },
-        --       -- Таймаут
-        --       timeout = 30000,
-        --     })
-        --   end,
-        -- },
+        http = {
+          opts = {
+            -- show_presets = false,
+            -- show_model_choices = false,
+            proxy = 'http://localhost:7999',
+          },
+          vllm = function()
+            return require('codecompanion.adapters').extend('openai_compatible', {
+              name = 'vllm',
+              formatted_name = 'vLLM',
+              env = {
+                url = 'http://localhost:8000',
+                chat_url = '/v1/chat/completions',
+              },
+              opts = {
+                stream = false,
+              },
+
+              schema = {
+                model = {
+                  default = 'Qwen3-Coder-30B-A3B-Instruct',
+                },
+                temperature = {
+                  default = 0.7,
+                  top_p = 0.1,
+                  reasoning_effort = 'high',
+                },
+                max_tokens = {
+                  default = 30000,
+                  range = { 1, 8196 },
+                },
+              },
+            })
+          end,
+        },
         acp = {
           opencode_acp = function()
             return require('codecompanion.adapters').extend('opencode', {
               defaults = {
                 timeout = 60000,
-              },
-
-              parameters = {
-                protocolVersion = 1,
-                clientCapabilities = {
-                  fs = { readTextFile = true, writeTextFile = true },
-                  terminal = false,
-                },
-                clientInfo = {
-                  name = 'CodeCompanion.nvim',
-                  version = '1.0.0',
-                },
               },
             })
           end,
